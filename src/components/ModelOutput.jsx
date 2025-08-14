@@ -17,7 +17,8 @@ function ModelOutput({
   isBusy,
   startTime,
   totalTime,
-  gotError
+  gotError,
+  onViewFullScreen
 }) {
   const [time, setTime] = useState(0)
   const [showSource, setShowSource] = useState(false)
@@ -69,7 +70,13 @@ function ModelOutput({
             </div>
           )}
 
-          {outputData && <Renderer mode={outputMode} code={outputData} />}
+          {outputData && (
+            <Renderer
+              mode={outputMode}
+              code={outputData}
+              onViewFullScreen={() => onViewFullScreen(outputData)}
+            />
+          )}
         </div>
       </div>
 
@@ -86,6 +93,14 @@ function ModelOutput({
         </div>
 
         <div className={c('outputActions', {active: outputData})}>
+          <button
+            className="iconButton"
+            onClick={() => onViewFullScreen(outputData)}
+          >
+            <span className="icon">fullscreen</span>
+            <span className="tooltip">View fullscreen</span>
+          </button>
+
           <button
             className="iconButton"
             onClick={() => setShowSource(!showSource)}

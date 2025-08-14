@@ -4,7 +4,7 @@
 */
 import {memo, useEffect, useRef, useState} from 'react'
 
-function Renderer({mode, code}) {
+function Renderer({mode, code, onViewFullScreen}) {
   const iframeRef = useRef(null)
   const [showError, setShowError] = useState(false)
 
@@ -15,7 +15,7 @@ function Renderer({mode, code}) {
   }, [iframeRef])
 
   return (
-    <div className={`renderer ${mode}Renderer`}>
+    <div className={`renderer ${mode}Renderer`} onClick={onViewFullScreen}>
       <iframe
         sandbox="allow-same-origin allow-scripts"
         loading="lazy"

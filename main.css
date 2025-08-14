@@ -338,6 +338,7 @@ header .batchSize input {
   width: 100%;
   height: 100%;
   animation: 0.5s fadeIn ease-out;
+  cursor: zoom-in;
 }
 .modelOutput .error {
   position: absolute;
@@ -791,4 +792,37 @@ summary {
   to {
     transform: translateY(-2px);
   }
+}
+
+.fullscreen-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: 0.3s fadeIn ease-out;
+}
+
+.fullscreen-overlay iframe {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-primary);
+}
+
+.fullscreen-overlay .close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--bg-senary);
+  color: var(--text-quinary);
+  width: 40px;
+  height: 40px;
+  font-size: 22px;
 }

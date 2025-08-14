@@ -19,6 +19,7 @@ import {
 import {isTouch, isIframe} from '../lib/consts'
 import FeedItem from './FeedItem'
 import Intro from './Intro'
+import FullScreenViewer from './FullScreenViewer'
 
 export default function App() {
   const feed = useStore.use.feed()
@@ -32,6 +33,7 @@ export default function App() {
   const [showPresets, setShowPresets] = useState(false)
   const [showModels, setShowModels] = useState(false)
   const [isDark, setIsDark] = useState(true)
+  const [fullscreenOutput, setFullscreenOutput] = useState(null)
 
   const inputRef = useRef(null)
 
@@ -267,6 +269,7 @@ export default function App() {
                 key={round.id}
                 round={round}
                 onModifyPrompt={onModifyPrompt}
+                onViewFullScreen={setFullscreenOutput}
               />
             ))}
           </ul>
@@ -274,6 +277,13 @@ export default function App() {
           <Intro />
         )}
       </main>
+
+      {fullscreenOutput && (
+        <FullScreenViewer
+          htmlContent={fullscreenOutput}
+          onClose={() => setFullscreenOutput(null)}
+        />
+      )}
     </div>
   )
 }

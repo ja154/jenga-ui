@@ -8,7 +8,7 @@ import {addRound, removeRound} from '../lib/actions'
 import modes from '../lib/modes'
 import ModelOutput from './ModelOutput'
 
-export default function FeedItem({round, onModifyPrompt}) {
+export default function FeedItem({round, onModifyPrompt, onViewFullScreen}) {
   const [showSystemInstruction, setShowSystemInstruction] = useState(false)
 
   return (
@@ -59,7 +59,7 @@ export default function FeedItem({round, onModifyPrompt}) {
       <ul className="outputs">
         {round.outputs.map(output => (
           <li key={output.id}>
-            <ModelOutput {...output} />
+            <ModelOutput {...output} onViewFullScreen={onViewFullScreen} />
           </li>
         ))}
       </ul>
