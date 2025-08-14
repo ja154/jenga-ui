@@ -170,7 +170,7 @@ export default function App() {
         >
           <input
             className="promptInput"
-            placeholder="Describe the UI you want to build..."
+            placeholder="e.g., a futuristic dashboard UI"
             onFocus={!isTouch && (() => setShowPresets(false))}
             ref={inputRef}
             onKeyDown={e => {

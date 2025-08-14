@@ -28,8 +28,10 @@ export default function Intro() {
     <section className="intro">
       <h2>👋 Welcome to UI Craft 🛠️</h2>
       <p>
-        This is a playground where you can generate UI components and full-page
-        layouts from a text prompt. ✅ 👀 Try one below:
+        This is a playground where you can generate anything from simple UI
+        components to complex, full-page layouts for applications and websites,
+        all from a simple text prompt. ✅ 👀 Try one of the examples below to get
+        started:
       </p>
 
       {Object.entries(modes).map(([key, mode]) => (
