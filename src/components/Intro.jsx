@@ -26,7 +26,7 @@ export default function Intro() {
 
   return (
     <section className="intro">
-      <h2>👋 Welcome to UI Craft 🛠️</h2>
+      <h2>👋 Welcome to JengaUi 🧱</h2>
       <p>
         This is a playground where you can generate anything from simple UI
         components to complex, full-page layouts for applications and websites,

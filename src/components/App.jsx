@@ -74,9 +74,9 @@ export default function App() {
         <div>
           <h1>
             <p>
-              UI<span>🛠️</span>
+              Jenga<span>🧱</span>
             </p>
-            <p>Craft</p>
+            <p>Ui</p>
           </h1>
         </div>
 
