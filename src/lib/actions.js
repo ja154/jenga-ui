@@ -43,6 +43,11 @@ export const addRound = prompt => {
     return
   }
 
+  const llmPrompt =
+    outputMode === 'refactor'
+      ? `Please redesign and refactor the following frontend code to be more modern, responsive, and aesthetically pleasing. Here is the code:\n\n\`\`\`html\n${prompt}\n\`\`\``
+      : prompt
+
   const newRound = {
     prompt,
     systemInstruction: modes[outputMode].systemInstruction,
@@ -67,7 +72,7 @@ export const addRound = prompt => {
         thinking: models[output.model].thinking,
         thinkingCapable: models[output.model].thinkingCapable,
         systemInstruction: newRound.systemInstruction,
-        prompt: newRound.prompt,
+        prompt: llmPrompt
       })
     } catch (e) {
       set(state => {

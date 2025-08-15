@@ -14,7 +14,8 @@ import {
   setBatchModel,
   setBatchSize,
   setVersusModel,
-  reset
+  reset,
+  setOutputMode
 } from '../lib/actions'
 import {isTouch, isIframe} from '../lib/consts'
 import FeedItem from './FeedItem'
@@ -32,6 +33,7 @@ export default function App() {
   const [presets, setPresets] = useState([])
   const [showPresets, setShowPresets] = useState(false)
   const [showModels, setShowModels] = useState(false)
+  const [showOutputModes, setShowOutputModes] = useState(false)
   const [isDark, setIsDark] = useState(true)
   const [fullscreenOutput, setFullscreenOutput] = useState(null)
 
@@ -60,6 +62,7 @@ export default function App() {
       addEventListener('touchstart', () => {
         setShowModels(false)
         setShowPresets(false)
+        setShowOutputModes(false)
       })
     }
   }, [])
@@ -100,10 +103,41 @@ export default function App() {
           <div className="label">Mode</div>
         </div>
 
-        <div className="selectorWrapper">
+        <div
+          className="selectorWrapper"
+          onMouseEnter={!isTouch && (() => setShowOutputModes(true))}
+          onMouseLeave={!isTouch && (() => setShowOutputModes(false))}
+          onTouchStart={
+            isTouch
+              ? e => {
+                  e.stopPropagation()
+                  setShowOutputModes(true)
+                  setShowModels(false)
+                  setShowPresets(false)
+                }
+              : null
+          }
+        >
           <p>
             {modes[outputMode].emoji} {modes[outputMode].name}
           </p>
+          <div className={c('selector', {active: showOutputModes})}>
+            <ul>
+              {Object.keys(modes).map(key => (
+                <li key={key}>
+                  <button
+                    className={c('chip', {primary: key === outputMode})}
+                    onClick={() => {
+                      setOutputMode(key)
+                      setShowOutputModes(false)
+                    }}
+                  >
+                    {modes[key].emoji} {modes[key].name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className="label">Output</div>
         </div>
 
@@ -118,6 +152,7 @@ export default function App() {
                   e.stopPropagation()
                   setShowModels(true)
                   setShowPresets(false)
+                  setShowOutputModes(false)
                 }
               : null
           }
@@ -166,39 +201,59 @@ export default function App() {
                   e.stopPropagation()
                   setShowPresets(true)
                   setShowModels(false)
+                  setShowOutputModes(false)
                 }
               : null
           }
         >
-          <input
-            className="promptInput"
-            placeholder="e.g., a futuristic dashboard UI"
-            onFocus={!isTouch && (() => setShowPresets(false))}
-            ref={inputRef}
-            onKeyDown={e => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                addRound(e.target.value)
-                e.target.blur()
-              }
-            }}
-          />
+          {outputMode === 'html' ? (
+            <input
+              className="promptInput"
+              placeholder="e.g., a futuristic dashboard UI"
+              onFocus={!isTouch && (() => setShowPresets(false))}
+              ref={inputRef}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  addRound(e.target.value)
+                  e.target.blur()
+                }
+              }}
+            />
+          ) : (
+            <textarea
+              className="promptInput"
+              placeholder="Paste your code here to refactor it... (Cmd/Ctrl+Enter to submit)"
+              onFocus={!isTouch && (() => setShowPresets(false))}
+              ref={inputRef}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                  e.preventDefault()
+                  addRound(e.target.value)
+                  e.target.blur()
+                }
+              }}
+            />
+          )}
           <div className={c('selector', {active: showPresets})}>
             <ul className="presets wrapped">
-              <li>
-                <button
-                  onClick={() => {
-                    addRound(
-                      presets[Math.floor(Math.random() * presets.length)].prompt
-                    )
-                    setShowPresets(false)
-                  }}
-                  className="chip primary"
-                >
-                  <span className="icon">Ifl</span>
-                  Random prompt
-                </button>
-              </li>
+              {outputMode === 'html' && (
+                <li>
+                  <button
+                    onClick={() => {
+                      addRound(
+                        presets[Math.floor(Math.random() * presets.length)]
+                          .prompt
+                      )
+                      setShowPresets(false)
+                    }}
+                    className="chip primary"
+                  >
+                    <span className="icon">Ifl</span>
+                    Random prompt
+                  </button>
+                </li>
+              )}
 
               {presets.map(({label, prompt}) => (
                 <li key={label}>
@@ -215,7 +270,7 @@ export default function App() {
               ))}
             </ul>
           </div>
-          <div className="label">Prompt</div>
+          <div className="label">{outputMode === 'html' ? 'Prompt' : 'Code'}</div>
         </div>
 
         {batchMode && (

@@ -108,9 +108,16 @@ header .promptInput {
   padding: 10px;
   border-radius: 4px;
   font-size: 12px;
-  height: 36px;
   width: 100%;
+}
+header input.promptInput {
+  height: 36px;
   overflow: hidden;
+}
+header textarea.promptInput {
+  height: 80px;
+  min-height: 36px;
+  resize: vertical;
 }
 header .promptInput:focus {
   background: #ffffff08;
@@ -521,7 +528,7 @@ body {
     Space Mono,
     monospace;
   font-size: 12px;
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background: linear-gradient(-45deg, #6d2e68, #2e6884, #1e5055, #22343e);
   background-size: 400% 400%;
   animation: gradient-animation 15s ease infinite;
 }

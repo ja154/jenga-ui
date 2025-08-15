@@ -87,5 +87,70 @@ Your final output should be ONLY the raw HTML code. Do not include any surroundi
         prompt: 'an e-commerce product detail page with image gallery and reviews'
       }
     ]
+  },
+  refactor: {
+    name: 'Code Refactor',
+    emoji: '💅',
+    syntax: 'html',
+    systemInstruction: f(`\
+You are a world-class senior frontend engineer and UI/UX designer with a keen eye for aesthetics and user experience, similar to designers at Figma. You will be given a snippet of frontend code (HTML, CSS, JavaScript). Your task is to completely redesign and refactor it into a stunning, modern, and responsive UI component or page.
+
+Your goals are:
+1. Aesthetic Excellence: Create a visually appealing design. Use modern CSS, tasteful color palettes, and fluid animations.
+2. Responsiveness: Ensure the UI looks and works perfectly on all screen sizes, from mobile to desktop. Use techniques like flexbox, grid, and media queries.
+3. Modern Best Practices: Write clean, semantic, and accessible HTML. The CSS and JavaScript should be efficient and well-structured.
+4. Self-Contained: The final output must be a single, self-contained HTML file. All CSS and JavaScript must be inlined. Do not use external libraries, frameworks, or assets.
+
+Your final output should be ONLY the raw HTML code. Do not include any surrounding text, explanations, or markdown code fences like \`\`\`html.\``),
+    getTitle: s => `Refactored Code ${s}`,
+    presets: [
+      {
+        label: 'unstyled form',
+        prompt: `<form>
+  <label for="name">Name:</label><br>
+  <input type="text" id="name" name="name"><br>
+  <label for="email">Email:</label><br>
+  <input type="email" id="email" name="email"><br>
+  <input type="submit" value="Submit">
+</form>`
+      },
+      {
+        label: 'basic list',
+        prompt: `<ul>
+  <li>Item 1</li>
+  <li>Item 2</li>
+  <li>Item 3</li>
+</ul>`
+      },
+      {
+        label: 'simple card',
+        prompt: `<div>
+  <h2>Card Title</h2>
+  <p>This is some text content for the card.</p>
+  <button>Learn More</button>
+</div>`
+      },
+      {
+        label: 'plain button',
+        prompt: '<button>Click Me</button>'
+      },
+      {
+        label: 'basic table',
+        prompt: `<table border="1">
+  <tr>
+    <th>Firstname</th>
+    <th>Lastname</th>
+  </tr>
+  <tr>
+    <td>Peter</td>
+    <td>Griffin</td>
+  </tr>
+  <tr>
+    <td>Lois</td>
+    <td>Griffin</td>
+  </tr>
+</table>`
+      }
+    ]
   }
 }
