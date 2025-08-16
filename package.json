@@ -12,6 +12,7 @@
     "@google/genai": "latest",
     "auto-zustand-selectors-hook": "latest",
     "clsx": "latest",
+    "html2canvas": "^1.4.1",
     "immer": "latest",
     "lodash.shuffle": "latest",
     "p-limit": "latest",
