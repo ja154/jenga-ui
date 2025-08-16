@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import {useEffect, useState, memo} from 'react'
+import React, {useEffect, useState, memo} from 'react'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import * as styles from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import c from 'clsx'

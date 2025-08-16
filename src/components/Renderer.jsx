@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import {memo, useEffect, useRef, useState} from 'react'
+import React, {memo, useEffect, useRef, useState} from 'react'
 
 function Renderer({mode, code, onViewFullScreen}) {
   const iframeRef = useRef(null)

@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import {useEffect} from 'react'
+import React, {useEffect} from 'react'
 
 export default function FullScreenViewer({htmlContent, onClose}) {
   useEffect(() => {
