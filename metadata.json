@@ -1,5 +1,7 @@
 {
   "name": "JengaUi",
   "description": "Quickly batch test prompts with visual outputs.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [
+    "microphone"
+  ]
 }
