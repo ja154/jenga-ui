@@ -99,9 +99,14 @@ header .rangeWrap {
   display: flex;
   align-items: center;
 }
-header .prompt {
+header .selectorWrapper.prompt {
   flex: 1 1 200px;
   min-width: 200px;
+}
+.prompt-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 header .promptInput {
   border: 1px solid var(--primary);
@@ -317,6 +322,9 @@ header .temperatureControl input {
   gap: 5px;
   align-items: flex-start;
 }
+.feed .header .prompt p {
+  white-space: pre-wrap;
+}
 .feed .header .systemInstruction {
   color: var(--text-secondary);
 }
@@ -362,8 +370,11 @@ header .temperatureControl input {
   background: var(--bg-primary);
   z-index: 100;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
   flex-direction: column;
+  gap: 5px;
+  text-align: center;
 }
 .modelOutput .error p {
   display: flex;
@@ -371,11 +382,23 @@ header .temperatureControl input {
   gap: 5px;
   padding: 5px;
   color: var(--text-secondary);
-  line-height: 2;
+  line-height: 1.5;
 }
 .modelOutput .error .icon {
   color: var(--text-primary);
   font-size: 26px;
+}
+.modelOutput .error .error-details {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  padding: 10px;
+  border-radius: 4px;
+  max-width: 100%;
+  overflow: auto;
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 .outputRendering {
   z-index: 20;

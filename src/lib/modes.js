@@ -272,5 +272,55 @@ Your final output should be ONLY the raw HTML code. Do not include any surroundi
 </table>`
       }
     ]
+  },
+  clone: {
+    name: 'Clone & Refactor',
+    emoji: '🔗',
+    syntax: 'html',
+    systemInstruction: f(`
+You are a world-class senior frontend engineer and UI/UX designer with a design sense comparable to Vercel or Stripe. Your task is to generate a single, self-contained HTML file based on the user's input.
+The input will be either:
+1.  The HTML from an existing webpage and a prompt with instructions for modification.
+2.  An image of a Figma design and a prompt with instructions for implementation.
+
+**Core Principles:**
+- **Follow Instructions:** Adhere strictly to the user's instructions (e.g., "make it dark mode", "simplify the layout", "implement this design").
+- **Aesthetic Excellence:** Transform the design into something visually stunning. Use sophisticated color palettes, modern typography, and ample whitespace.
+- **Content Preservation (for HTML):** If given HTML, preserve the original text and high-level structure, but completely overhaul the styling and layout.
+- **Pixel-Perfect Implementation (for Images):** If given an image, create a responsive HTML/CSS implementation that is a faithful representation of the design.
+- **Modern & Responsive:** Ensure the resulting UI is fully responsive and uses modern best practices.
+
+**Technical Constraints:**
+- **Self-Contained:** The final output must be a single HTML file. All CSS and JavaScript must be inlined.
+- **No External Dependencies:** Do not link to external assets. If you need placeholder images, generate them using SVG.
+
+Your final output must be ONLY the raw HTML code. Do not include any surrounding text, explanations, or markdown code fences like \`\`\`html.\``),
+    getTitle: s => `Cloned ${s}`,
+    presets: [
+      {
+        label: 'make it dark mode',
+        prompt: 'Refactor this site to use a modern, professional dark mode theme.'
+      },
+      {
+        label: 'simplify the layout',
+        prompt: 'Simplify the layout into a clean, single-column, minimalist design with generous whitespace.'
+      },
+      {
+        label: 'give it a retro 90s theme',
+        prompt: 'Give this page a retro 90s GeoCities-style makeover, complete with pixelated fonts, bright colors, and maybe a cheesy animation.'
+      },
+      {
+        label: 'make it look like a brutalist website',
+        prompt: 'Convert the design to a brutalist style. Use raw, unstyled elements, monochrome colors, and a monospace font.'
+      },
+      {
+        label: 'turn it into a professional blog post',
+        prompt: 'Reformat the content into a clean, readable, professional blog post layout, like something you would see on Medium.'
+      },
+      {
+        label: 'modernize with a glassmorphism effect',
+        prompt: 'Modernize the UI by applying a glassmorphism (frosted glass) effect to the main content containers.'
+      }
+    ]
   }
 }

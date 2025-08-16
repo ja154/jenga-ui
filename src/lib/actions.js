@@ -10,6 +10,72 @@ import models from './models'
 const get = useStore.getState
 const set = useStore.setState
 
+const FIGMA_API_KEY = process.env.FIGMA_API_KEY;
+
+/**
+ * Fetches a frame from Figma as a base64 encoded PNG image.
+ * @param {string} fileKey - The Figma file key.
+ * @param {string} nodeId - The ID of the node (frame) to render.
+ * @returns {Promise<string>} A promise that resolves to the base64 encoded image data.
+ */
+async function getFigmaFrameAsImage(fileKey, nodeId) {
+  if (!FIGMA_API_KEY) {
+    throw new Error(
+      'This app is not configured to use the Figma API. A FIGMA_API_KEY is missing.'
+    );
+  }
+
+  // 1. Get the image URL from the Figma API
+  const imageUrlsResponse = await fetch(
+    `https://api.figma.com/v1/images/${fileKey}?ids=${nodeId}&format=png&scale=2`,
+    {
+      headers: {
+        'X-Figma-Token': FIGMA_API_KEY
+      }
+    }
+  );
+
+  if (!imageUrlsResponse.ok) {
+    const errorData = await imageUrlsResponse.json().catch(() => ({}));
+    throw new Error(
+      `Figma API error (${imageUrlsResponse.status}): ${
+        errorData.err || 'Failed to get image URL'
+      }`
+    );
+  }
+
+  const imageUrlsData = await imageUrlsResponse.json();
+  const imageUrl = imageUrlsData.images?.[nodeId];
+
+  if (!imageUrl) {
+    throw new Error(
+      'Could not find the specified frame (node-id) in the Figma file. Please make sure the link points to a specific frame.'
+    );
+  }
+
+  // 2. Fetch the image itself
+  const imageResponse = await fetch(imageUrl);
+
+  if (!imageResponse.ok) {
+    throw new Error(
+      `Failed to fetch the Figma image from its URL (${imageResponse.status}).`
+    );
+  }
+
+  // 3. Convert the image to a base64 string
+  const imageBlob = await imageResponse.blob();
+  const reader = new FileReader();
+  return new Promise((resolve, reject) => {
+    reader.onloadend = () => {
+      resolve(reader.result.split(',')[1]);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(imageBlob);
+  });
+}
+
+const figmaUrlRegex = /figma\.com\/file\/([^/]+)\/.*?[?&]node-id=([^&]+)/;
+
 export const init = () => {
   if (get().didInit) {
     return
@@ -34,7 +100,7 @@ const newOutput = (model, mode, isBatch) => ({
   comments: ''
 })
 
-export const addRound = prompt => {
+export const addRound = async (prompt, options = {}) => {
   scrollTo({top: 0, left: 0, behavior: 'smooth'})
 
   const {
@@ -46,17 +112,31 @@ export const addRound = prompt => {
     temperature
   } = get()
 
+  const {cloneUrl} = options
+  const isCloneMode = outputMode === 'clone'
+  const figmaMatch =
+    isCloneMode && cloneUrl ? cloneUrl.match(figmaUrlRegex) : null
+
+  if (isCloneMode && (!cloneUrl || !cloneUrl.trim())) {
+    alert('Please enter a URL to clone.')
+    return
+  }
+
   if (!batchMode && Object.values(versusModels).every(active => !active)) {
     return
   }
 
-  const llmPrompt =
-    outputMode === 'refactor'
-      ? `Please redesign and refactor the following frontend code to be more modern, responsive, and aesthetically pleasing. Here is the code:\n\n\`\`\`html\n${prompt}\n\`\`\``
-      : prompt
+  let roundPrompt
+  if (figmaMatch) {
+    roundPrompt = `Clone from Figma: ${cloneUrl}\nChange: ${prompt}`
+  } else if (isCloneMode) {
+    roundPrompt = `Clone: ${cloneUrl}\nChange: ${prompt}`
+  } else {
+    roundPrompt = prompt
+  }
 
   const newRound = {
-    prompt,
+    prompt: roundPrompt,
     systemInstruction: modes[outputMode].systemInstruction,
     id: crypto.randomUUID(),
     createdAt: new Date(),
@@ -68,6 +148,75 @@ export const addRound = prompt => {
       : Object.entries(versusModels)
           .filter(([, active]) => active)
           .map(([model]) => newOutput(model, outputMode))
+  }
+
+  set(state => {
+    state.feed.unshift(newRound)
+  })
+
+  let llmPrompt
+
+  if (figmaMatch) {
+    try {
+      const fileKey = figmaMatch[1]
+      const nodeId = decodeURIComponent(figmaMatch[2])
+      const base64Image = await getFigmaFrameAsImage(fileKey, nodeId)
+
+      const imagePart = {
+        inlineData: {
+          mimeType: 'image/png',
+          data: base64Image
+        }
+      }
+      const textPart = {
+        text: `Based on the user instruction, create a single, self-contained, responsive HTML file from the provided Figma design image.\n\nUSER INSTRUCTION:\n${prompt}`
+      }
+      llmPrompt = {parts: [imagePart, textPart]}
+    } catch (e) {
+      console.error('Error fetching from Figma:', e)
+      set(state => {
+        const round = state.feed.find(r => r.id === newRound.id)
+        if (round) {
+          round.outputs.forEach(output => {
+            output.isBusy = false
+            output.gotError = true
+            output.totalTime = Date.now() - output.startTime
+            output.outputData = `Failed to process Figma link.\n\nError: ${e.message}`
+          })
+        }
+      })
+      return
+    }
+  } else if (isCloneMode) {
+    try {
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(
+        cloneUrl
+      )}`
+      const response = await fetch(proxyUrl)
+      if (!response.ok)
+        throw new Error(`Network response was not ok: ${response.statusText}`)
+      const fetchedHtml = await response.text()
+      llmPrompt = `Based on the following user instruction, refactor the provided HTML code. \n\nUSER INSTRUCTION:\n${prompt}\n\nORIGINAL HTML CODE:\n\`\`\`html\n${fetchedHtml}\n\`\`\``
+    } catch (e) {
+      console.error('Error fetching URL for cloning:', e)
+      set(state => {
+        const round = state.feed.find(r => r.id === newRound.id)
+        if (round) {
+          round.outputs.forEach(output => {
+            output.isBusy = false
+            output.gotError = true
+            output.totalTime = Date.now() - output.startTime
+            output.outputData = `Failed to fetch URL: ${cloneUrl}\n\nError: ${e.message}`
+          })
+        }
+      })
+      return
+    }
+  } else {
+    llmPrompt =
+      outputMode === 'refactor'
+        ? `Please redesign and refactor the following frontend code to be more modern, responsive, and aesthetically pleasing. Here is the code:\n\n\`\`\`html\n${prompt}\n\`\`\``
+        : prompt
   }
 
   newRound.outputs.forEach(async (output, i) => {
@@ -88,38 +237,28 @@ export const addRound = prompt => {
         if (!round) {
           return
         }
-        round.outputs[i] = {
-          ...output,
-          isBusy: false,
-          gotError: true,
-          totalTime: Date.now() - output.startTime
-        }
+        const targetOutput = round.outputs[i]
+        targetOutput.isBusy = false
+        targetOutput.gotError = true
+        targetOutput.totalTime = Date.now() - targetOutput.startTime
       })
       return
     }
 
     set(state => {
-      const output = newRound.outputs[i]
       const round = state.feed.find(round => round.id === newRound.id)
 
       if (!round) {
         return
       }
-
-      round.outputs[i] = {
-        ...output,
-        outputData: res
-          .replace(/```\w+/gm, '')
-          .replace(/```\n?$/gm, '')
-          .trim(),
-        isBusy: false,
-        totalTime: Date.now() - output.startTime
-      }
+      const targetOutput = round.outputs[i]
+      targetOutput.outputData = res
+        .replace(/```\w+/gm, '')
+        .replace(/```\n?$/gm, '')
+        .trim()
+      targetOutput.isBusy = false
+      targetOutput.totalTime = Date.now() - targetOutput.startTime
     })
-  })
-
-  set(state => {
-    state.feed.unshift(newRound)
   })
 }
 

@@ -40,6 +40,7 @@ export default function App() {
   const [showOutputModes, setShowOutputModes] = useState(false)
   const [isDark, setIsDark] = useState(true)
   const [fullscreenOutput, setFullscreenOutput] = useState(null)
+  const [cloneUrl, setCloneUrl] = useState('')
 
   const inputRef = useRef(null)
 
@@ -52,6 +53,16 @@ export default function App() {
     inputRef.current.value = prompt
     inputRef.current.focus()
   }, [])
+
+  const handleGenerate = useCallback(() => {
+    const prompt = inputRef.current.value;
+    if (outputMode === 'clone') {
+      addRound(prompt, { cloneUrl });
+    } else {
+      addRound(prompt);
+    }
+    inputRef.current.blur();
+  }, [outputMode, cloneUrl]);
 
   const toggleTheme = useCallback(() => {
     setIsDark(!isDark)
@@ -227,46 +238,66 @@ export default function App() {
               : null
           }
         >
-          {outputMode === 'html' ? (
-            <input
-              className="promptInput"
-              placeholder="e.g., a futuristic dashboard UI"
-              onFocus={!isTouch && (() => setShowPresets(false))}
-              ref={inputRef}
-              onKeyDown={e => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  addRound(e.target.value)
-                  e.target.blur()
+          <div className="prompt-input-container">
+            {outputMode === 'clone' && (
+              <input
+                className="promptInput url-input"
+                placeholder="URL to clone or Figma frame link"
+                value={cloneUrl}
+                onChange={e => setCloneUrl(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    inputRef.current.focus();
+                  }
+                }}
+              />
+            )}
+
+            {['refactor', 'clone'].includes(outputMode) ? (
+              <textarea
+                className="promptInput"
+                placeholder={
+                  outputMode === 'clone'
+                    ? 'Describe your desired changes... (Cmd/Ctrl+Enter)'
+                    : 'Paste your code here to refactor it... (Cmd/Ctrl+Enter)'
                 }
-              }}
-            />
-          ) : (
-            <textarea
-              className="promptInput"
-              placeholder="Paste your code here to refactor it... (Cmd/Ctrl+Enter to submit)"
-              onFocus={!isTouch && (() => setShowPresets(false))}
-              ref={inputRef}
-              onKeyDown={e => {
-                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                  e.preventDefault()
-                  addRound(e.target.value)
-                  e.target.blur()
-                }
-              }}
-            />
-          )}
+                onFocus={!isTouch && (() => setShowPresets(false))}
+                ref={inputRef}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                    e.preventDefault();
+                    handleGenerate();
+                  }
+                }}
+              />
+            ) : (
+              <input
+                className="promptInput"
+                placeholder="e.g., a futuristic dashboard UI"
+                onFocus={!isTouch && (() => setShowPresets(false))}
+                ref={inputRef}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleGenerate();
+                  }
+                }}
+              />
+            )}
+          </div>
           <div className={c('selector', {active: showPresets})}>
             <ul className="presets wrapped">
               {outputMode === 'html' && (
                 <li>
                   <button
                     onClick={() => {
-                      addRound(
+                      const randomPrompt =
                         presets[Math.floor(Math.random() * presets.length)]
-                          .prompt
-                      )
-                      setShowPresets(false)
+                          .prompt;
+                      onModifyPrompt(randomPrompt);
+                      addRound(randomPrompt);
+                      setShowPresets(false);
                     }}
                     className="chip primary"
                   >
@@ -280,8 +311,11 @@ export default function App() {
                 <li key={label}>
                   <button
                     onClick={() => {
-                      addRound(prompt)
-                      setShowPresets(false)
+                      onModifyPrompt(prompt);
+                      if (outputMode !== 'clone') {
+                        addRound(prompt);
+                      }
+                      setShowPresets(false);
                     }}
                     className="chip"
                   >
@@ -291,8 +325,13 @@ export default function App() {
               ))}
             </ul>
           </div>
-          <div className="label">{outputMode === 'html' ? 'Prompt' : 'Code'}</div>
+          <div className="label">
+            {outputMode === 'clone' ? 'URL & Prompt' :
+             outputMode === 'refactor' ? 'Code' :
+             'Prompt'}
+          </div>
         </div>
+
 
         {batchMode && (
           <div>
@@ -318,6 +357,7 @@ export default function App() {
             onClick={() => {
               reset()
               inputRef.current.value = ''
+              setCloneUrl('');
             }}
           >
             <span className="icon">replay</span>
