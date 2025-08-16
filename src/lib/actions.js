@@ -151,4 +151,90 @@ export const reset = () => {
   })
 }
 
+export const startEditing = (roundId, outputId) => {
+  const round = get().feed.find(r => r.id === roundId)
+  if (!round) return
+  const output = round.outputs.find(o => o.id === outputId)
+  if (!output) return
+
+  set(state => {
+    state.editingOutput = {
+      roundId,
+      outputId,
+      code: output.outputData,
+      isEditingBusy: false
+    }
+  })
+}
+
+export const updateEditingCode = code => {
+  set(state => {
+    if (state.editingOutput) {
+      state.editingOutput.code = code
+    }
+  })
+}
+
+export const stopEditing = () => {
+  set(state => {
+    state.editingOutput = null
+  })
+}
+
+export const saveAndStopEditing = () => {
+  const {roundId, outputId, code} = get().editingOutput
+  set(state => {
+    const round = state.feed.find(r => r.id === roundId)
+    if (round) {
+      const output = round.outputs.find(o => o.id === outputId)
+      if (output) {
+        output.outputData = code
+      }
+    }
+    state.editingOutput = null
+  })
+}
+
+export const applyAIChatEdit = async userPrompt => {
+  const {code} = get().editingOutput
+  if (!code || !userPrompt) return
+
+  set(state => {
+    if (state.editingOutput) {
+      state.editingOutput.isEditingBusy = true
+    }
+  })
+
+  const systemInstruction = `You are an elite frontend developer AI assistant. Your task is to modify a self-contained HTML file based on user instructions. The user will provide the current code and a command. You must apply the change and return only the complete, updated, raw HTML code. Do not add any explanations or markdown formatting around the code.`
+  const fullPrompt = `I need to modify the following HTML code.\n\nCURRENT CODE:\n\`\`\`html\n${code}\n\`\`\`\n\nMODIFICATION INSTRUCTION:\n${userPrompt}\n\nReturn the full HTML file with the modification.`
+
+  let res
+  try {
+    const modelInfo = models.flash
+    res = await llmGen({
+      model: modelInfo.modelString,
+      thinking: modelInfo.thinking,
+      thinkingCapable: modelInfo.thinkingCapable,
+      systemInstruction,
+      prompt: fullPrompt
+    })
+
+    const newCode = res
+      .replace(/```\w+/gm, '')
+      .replace(/```\n?$/gm, '')
+      .trim()
+
+    updateEditingCode(newCode)
+  } catch (e) {
+    console.error('AI chat edit failed', e)
+    // In a real app, we'd show a user-facing error here.
+  } finally {
+    set(state => {
+      if (state.editingOutput) {
+        state.editingOutput.isEditingBusy = false
+      }
+    })
+  }
+}
+
 init()

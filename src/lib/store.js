@@ -22,7 +22,8 @@ export default createSelectorFunctions(
         Object.keys(models)
           .filter(model => !models[model].imageOutput)
           .map(model => [model, true])
-      )
+      ),
+      editingOutput: null
     }))
   )
 )

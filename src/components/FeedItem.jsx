@@ -59,7 +59,11 @@ export default function FeedItem({round, onModifyPrompt, onViewFullScreen}) {
       <ul className="outputs">
         {round.outputs.map(output => (
           <li key={output.id}>
-            <ModelOutput {...output} onViewFullScreen={onViewFullScreen} />
+            <ModelOutput
+              {...output}
+              roundId={round.id}
+              onViewFullScreen={onViewFullScreen}
+            />
           </li>
         ))}
       </ul>

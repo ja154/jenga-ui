@@ -21,6 +21,7 @@ import {isTouch, isIframe} from '../lib/consts'
 import FeedItem from './FeedItem'
 import Intro from './Intro'
 import FullScreenViewer from './FullScreenViewer'
+import Editor from './Editor'
 
 export default function App() {
   const feed = useStore.use.feed()
@@ -29,6 +30,7 @@ export default function App() {
   const versusModels = useStore.use.versusModels()
   const batchMode = useStore.use.batchMode()
   const batchSize = useStore.use.batchSize()
+  const editingOutput = useStore.use.editingOutput()
 
   const [presets, setPresets] = useState([])
   const [showPresets, setShowPresets] = useState(false)
@@ -339,6 +341,8 @@ export default function App() {
           onClose={() => setFullscreenOutput(null)}
         />
       )}
+
+      {editingOutput && <Editor />}
     </div>
   )
 }

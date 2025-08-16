@@ -8,9 +8,12 @@ import * as styles from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import c from 'clsx'
 import modes from '../lib/modes'
 import models from '../lib/models'
+import {startEditing} from '../lib/actions'
 import Renderer from './Renderer'
 
 function ModelOutput({
+  id,
+  roundId,
   model,
   outputData,
   outputMode,
@@ -93,6 +96,14 @@ function ModelOutput({
         </div>
 
         <div className={c('outputActions', {active: outputData})}>
+          <button
+            className="iconButton"
+            onClick={() => startEditing(roundId, id)}
+          >
+            <span className="icon">edit_note</span>
+            <span className="tooltip">Live edit</span>
+          </button>
+
           <button
             className="iconButton"
             onClick={() => onViewFullScreen(outputData)}
