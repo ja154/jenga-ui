@@ -25,6 +25,7 @@ async function generate({
   prompt,
   thinking,
   thinkingCapable,
+  temperature
 }) {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
@@ -38,6 +39,7 @@ async function generate({
         config: {
           systemInstruction,
           safetySettings,
+          temperature,
           ...(thinkingCapable && !thinking
             ? {thinkingConfig: {thinkingBudget: 0}}
             : {}),

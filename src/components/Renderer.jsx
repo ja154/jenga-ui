@@ -14,12 +14,44 @@ function Renderer({mode, code, onViewFullScreen}) {
     }
   }, [iframeRef])
 
+  const getSrcDoc = () => {
+    if (mode === 'wireframe') {
+      return `
+        <html>
+          <head>
+            <style>
+              body { 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                background-color: #f0f0f0; 
+                margin: 0;
+                height: 100vh;
+                font-family: sans-serif;
+              }
+              svg { 
+                max-width: 95%; 
+                max-height: 95%;
+                background-color: white;
+                border: 1px solid #ccc;
+              }
+            </style>
+          </head>
+          <body>
+            ${code}
+          </body>
+        </html>
+      `
+    }
+    return code
+  }
+
   return (
     <div className={`renderer ${mode}Renderer`} onClick={onViewFullScreen}>
       <iframe
         sandbox="allow-same-origin allow-scripts"
         loading="lazy"
-        srcDoc={code}
+        srcDoc={getSrcDoc()}
         ref={iframeRef}
       />
 

@@ -17,12 +17,13 @@ export default createSelectorFunctions(
       outputMode: Object.keys(modes)[0],
       batchMode: true,
       batchSize: 3,
-      batchModel: Object.keys(models)[1],
+      batchModel: Object.keys(models)[0],
       versusModels: Object.fromEntries(
         Object.keys(models)
           .filter(model => !models[model].imageOutput)
           .map(model => [model, true])
       ),
+      temperature: 0.9,
       editingOutput: null
     }))
   )

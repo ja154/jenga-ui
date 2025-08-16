@@ -33,6 +33,18 @@ function ModelOutput({
     setTimeout(() => setCopied(false), 1000)
   }
 
+  const handleDownload = () => {
+    const blob = new Blob([outputData], {type: 'image/svg+xml'})
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'wireframe.svg'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
   useEffect(() => {
     let interval
 
@@ -96,6 +108,13 @@ function ModelOutput({
         </div>
 
         <div className={c('outputActions', {active: outputData})}>
+          {outputMode === 'wireframe' && (
+            <button className="iconButton" onClick={handleDownload}>
+              <span className="icon">download</span>
+              <span className="tooltip">Download SVG</span>
+            </button>
+          )}
+
           <button
             className="iconButton"
             onClick={() => startEditing(roundId, id)}
@@ -104,13 +123,15 @@ function ModelOutput({
             <span className="tooltip">Live edit</span>
           </button>
 
-          <button
-            className="iconButton"
-            onClick={() => onViewFullScreen(outputData)}
-          >
-            <span className="icon">fullscreen</span>
-            <span className="tooltip">View fullscreen</span>
-          </button>
+          {outputMode !== 'wireframe' && (
+            <button
+              className="iconButton"
+              onClick={() => onViewFullScreen(outputData)}
+            >
+              <span className="icon">fullscreen</span>
+              <span className="tooltip">View fullscreen</span>
+            </button>
+          )}
 
           <button
             className="iconButton"

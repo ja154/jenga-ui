@@ -37,7 +37,14 @@ const newOutput = (model, mode, isBatch) => ({
 export const addRound = prompt => {
   scrollTo({top: 0, left: 0, behavior: 'smooth'})
 
-  const {outputMode, batchMode, batchSize, batchModel, versusModels} = get()
+  const {
+    outputMode,
+    batchMode,
+    batchSize,
+    batchModel,
+    versusModels,
+    temperature
+  } = get()
 
   if (!batchMode && Object.values(versusModels).every(active => !active)) {
     return
@@ -72,7 +79,8 @@ export const addRound = prompt => {
         thinking: models[output.model].thinking,
         thinkingCapable: models[output.model].thinkingCapable,
         systemInstruction: newRound.systemInstruction,
-        prompt: llmPrompt
+        prompt: llmPrompt,
+        temperature
       })
     } catch (e) {
       set(state => {
@@ -133,6 +141,11 @@ export const setBatchMode = active =>
 export const setBatchSize = size =>
   set(state => {
     state.batchSize = size
+  })
+
+export const setTemperature = temp =>
+  set(state => {
+    state.temperature = temp
   })
 
 export const setVersusModel = (model, active) =>
@@ -197,6 +210,7 @@ export const saveAndStopEditing = () => {
 
 export const applyAIChatEdit = async userPrompt => {
   const {code} = get().editingOutput
+  const {temperature} = get()
   if (!code || !userPrompt) return
 
   set(state => {
@@ -216,7 +230,8 @@ export const applyAIChatEdit = async userPrompt => {
       thinking: modelInfo.thinking,
       thinkingCapable: modelInfo.thinkingCapable,
       systemInstruction,
-      prompt: fullPrompt
+      prompt: fullPrompt,
+      temperature
     })
 
     const newCode = res

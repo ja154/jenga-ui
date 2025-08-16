@@ -15,7 +15,8 @@ import {
   setBatchSize,
   setVersusModel,
   reset,
-  setOutputMode
+  setOutputMode,
+  setTemperature
 } from '../lib/actions'
 import {isTouch, isIframe} from '../lib/consts'
 import FeedItem from './FeedItem'
@@ -30,6 +31,7 @@ export default function App() {
   const versusModels = useStore.use.versusModels()
   const batchMode = useStore.use.batchMode()
   const batchSize = useStore.use.batchSize()
+  const temperature = useStore.use.temperature()
   const editingOutput = useStore.use.editingOutput()
 
   const [presets, setPresets] = useState([])
@@ -192,6 +194,23 @@ export default function App() {
           </div>
           <div className="label">Model{batchMode ? '' : 's'}</div>
         </div>
+
+        <div>
+            <div className="rangeWrap">
+              <div className="temperatureControl">
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.1}
+                  value={temperature}
+                  onChange={e => setTemperature(e.target.valueAsNumber)}
+                />{' '}
+                {temperature.toFixed(1)}
+              </div>
+            </div>
+            <div className="label">Creativity</div>
+          </div>
 
         <div
           className="selectorWrapper prompt"
