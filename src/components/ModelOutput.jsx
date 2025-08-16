@@ -65,7 +65,7 @@ function ModelOutput({
             language={modes[outputMode].syntax}
             style={styles.atomOneDark}
           >
-            {outputData}
+            {outputData || ''}
           </SyntaxHighlighter>
         </div>
 
@@ -75,7 +75,14 @@ function ModelOutput({
               <p>
                 <span className="icon">error</span>
               </p>
-              <p>Response error</p>
+              <p>
+                {outputData && outputData.includes('Figma')
+                  ? 'Figma Error'
+                  : outputData && outputData.includes('Failed to fetch')
+                    ? 'Fetch Error'
+                    : 'Response Error'}
+              </p>
+              {outputData && <div className="error-details">{outputData}</div>}
             </div>
           )}
 
@@ -85,7 +92,7 @@ function ModelOutput({
             </div>
           )}
 
-          {outputData && (
+          {outputData && !gotError && (
             <Renderer
               mode={outputMode}
               code={outputData}
@@ -107,7 +114,7 @@ function ModelOutput({
           )}
         </div>
 
-        <div className={c('outputActions', {active: outputData})}>
+        <div className={c('outputActions', {active: outputData && !gotError})}>
           {outputMode === 'wireframe' && (
             <button className="iconButton" onClick={handleDownload}>
               <span className="icon">download</span>

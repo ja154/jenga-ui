@@ -10,7 +10,7 @@ const limit = pLimit(9);
 const timeoutMs = 193_333;
 const maxRetries = 5;
 const baseDelay = 1_233;
-const ai = new GoogleGenAI({apiKey: process.env.API_KEY});
+const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
 
 const safetySettings = [
   'HARM_CATEGORY_HATE_SPEECH',
@@ -30,44 +30,53 @@ async function generate({
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('timeout')), timeoutMs)
+        setTimeout(() => reject(new Error('Request timed out')), timeoutMs)
       );
 
-      const modelPromise = ai.models.generateContent({
+      const genConfig = {
         model,
         contents: prompt,
         config: {
-          systemInstruction,
           safetySettings,
           temperature,
-          ...(thinkingCapable && !thinking
-            ? {thinkingConfig: {thinkingBudget: 0}}
-            : {}),
+          systemInstruction: systemInstruction || undefined,
         },
-      });
+      };
 
-      const response = await Promise.race([modelPromise, timeoutPromise]);
-      return response.text;
-    } catch (error) {
-      if (error.message === 'timeout' || error.name === 'AbortError') {
-        if (attempt < maxRetries - 1) {
-          console.warn(`Request timed out, retrying...`);
-        } else {
-          throw new Error(`Request timed out after ${maxRetries} attempts.`);
-        }
-      } else {
-        if (attempt === maxRetries - 1) {
-          throw error;
-        }
+      // Only add thinkingConfig if the model is capable and we specifically want to disable thinking
+      if (thinkingCapable && !thinking) {
+          genConfig.config.thinkingConfig = { thinkingBudget: 0 };
       }
 
-      const delay = baseDelay * 2 ** attempt;
-      await new Promise(res => setTimeout(res, delay));
-      console.warn(
-        `Attempt ${attempt + 1} failed, retrying after ${delay}ms...`
+      const responsePromise = ai.models.generateContent(genConfig);
+
+      const response = await Promise.race([responsePromise, timeoutPromise]);
+
+      if (response && typeof response.text === 'string') {
+        return response.text;
+      }
+      
+      console.warn('API returned unexpected response structure:', response);
+      throw new Error('Invalid response from API. Response did not contain a text property.');
+
+    } catch (e) {
+      console.error(
+        `Attempt ${attempt + 1} failed for model ${model}:`,
+        e.message
       );
+      if (attempt === maxRetries - 1) {
+        // Re-throw the original error on the last attempt
+        throw e;
+      }
+      // Wait before retrying with exponential backoff
+      const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
+      await new Promise(res => setTimeout(res, delay));
     }
   }
+  // This is a fallback, but the loop should either return or throw.
+  throw new Error('Generation failed after all retries.');
 }
 
-export default params => limit(() => generate(params));
+export default function llmGen(args) {
+  return limit(() => generate(args));
+}
