@@ -2,17 +2,17 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import React, {memo, forwardRef, useEffect, useState} from 'react'
+import React, {memo, useEffect, useRef, useState} from 'react'
 
-const Renderer = forwardRef(function Renderer({mode, code, onViewFullScreen}, ref) {
+function Renderer({mode, code, onViewFullScreen}) {
+  const iframeRef = useRef(null)
   const [showError, setShowError] = useState(false)
 
   useEffect(() => {
-    const iframe = ref.current
-    if (iframe) {
-      iframe.contentWindow.onerror = () => setShowError(true)
+    if (iframeRef.current) {
+      iframeRef.current.contentWindow.onerror = () => setShowError(true)
     }
-  }, [ref])
+  }, [iframeRef])
 
   const getSrcDoc = () => {
     if (mode === 'wireframe') {
@@ -52,7 +52,7 @@ const Renderer = forwardRef(function Renderer({mode, code, onViewFullScreen}, re
         sandbox="allow-same-origin allow-scripts"
         loading="lazy"
         srcDoc={getSrcDoc()}
-        ref={ref}
+        ref={iframeRef}
       />
 
       {showError && (
@@ -64,6 +64,6 @@ const Renderer = forwardRef(function Renderer({mode, code, onViewFullScreen}, re
       )}
     </div>
   )
-})
+}
 
 export default memo(Renderer)

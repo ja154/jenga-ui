@@ -2,11 +2,10 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import React, {useEffect, useState, memo, useRef} from 'react'
+import React, {useEffect, useState, memo} from 'react'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import * as styles from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import c from 'clsx'
-import html2canvas from 'html2canvas'
 import modes from '../lib/modes'
 import models from '../lib/models'
 import {startEditing} from '../lib/actions'
@@ -27,7 +26,6 @@ function ModelOutput({
   const [time, setTime] = useState(0)
   const [showSource, setShowSource] = useState(false)
   const [copied, setCopied] = useState(false)
-  const iframeRef = useRef(null)
 
   const copySource = () => {
     navigator.clipboard.writeText(outputData.trim())
@@ -45,24 +43,6 @@ function ModelOutput({
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
-  }
-
-  const handleDownloadImage = () => {
-    if (iframeRef.current) {
-      html2canvas(iframeRef.current.contentWindow.document.body, {
-        useCORS: true,
-        allowTaint: true,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: iframeRef.current.contentWindow.document.body.scrollWidth,
-        windowHeight: iframeRef.current.contentWindow.document.body.scrollHeight,
-      }).then(canvas => {
-        const link = document.createElement('a')
-        link.download = 'component.png'
-        link.href = canvas.toDataURL('image/png')
-        link.click()
-      })
-    }
   }
 
   useEffect(() => {
@@ -114,7 +94,6 @@ function ModelOutput({
 
           {outputData && !gotError && (
             <Renderer
-              ref={iframeRef}
               mode={outputMode}
               code={outputData}
               onViewFullScreen={() => onViewFullScreen(outputData)}
@@ -140,13 +119,6 @@ function ModelOutput({
             <button className="iconButton" onClick={handleDownload}>
               <span className="icon">download</span>
               <span className="tooltip">Download SVG</span>
-            </button>
-          )}
-
-          {['html', 'background', 'refactor'].includes(outputMode) && (
-            <button className="iconButton" onClick={handleDownloadImage}>
-              <span className="icon">photo_camera</span>
-              <span className="tooltip">Download PNG</span>
             </button>
           )}
 
