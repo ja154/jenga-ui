@@ -2,10 +2,11 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import React, {useEffect, useState, memo} from 'react'
+import React, {useEffect, useState, memo, useRef} from 'react'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import * as styles from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import c from 'clsx'
+import html2canvas from 'html2canvas'
 import modes from '../lib/modes'
 import models from '../lib/models'
 import {startEditing} from '../lib/actions'
@@ -26,6 +27,7 @@ function ModelOutput({
   const [time, setTime] = useState(0)
   const [showSource, setShowSource] = useState(false)
   const [copied, setCopied] = useState(false)
+  const rendererRef = useRef(null)
 
   const copySource = () => {
     navigator.clipboard.writeText(outputData.trim())
@@ -44,6 +46,29 @@ function ModelOutput({
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
   }
+
+  const handleDownloadImage = async () => {
+    if (!rendererRef.current) {
+      console.error('Renderer ref not available');
+      return;
+    }
+
+    try {
+      const iframe = rendererRef.current;
+      // Giving the iframe a moment to ensure all content is rendered.
+      await new Promise(resolve => setTimeout(resolve, 200));
+      const canvas = await html2canvas(iframe.contentWindow.document.body);
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = `${outputMode}-design.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Failed to capture image:', error);
+      alert('Sorry, there was an error downloading the image.');
+    }
+  };
 
   useEffect(() => {
     let interval
@@ -94,6 +119,7 @@ function ModelOutput({
 
           {outputData && !gotError && (
             <Renderer
+              ref={rendererRef}
               mode={outputMode}
               code={outputData}
               onViewFullScreen={() => onViewFullScreen(outputData)}
@@ -119,6 +145,13 @@ function ModelOutput({
             <button className="iconButton" onClick={handleDownload}>
               <span className="icon">download</span>
               <span className="tooltip">Download SVG</span>
+            </button>
+          )}
+
+          {['html', 'background', 'refactor', 'clone'].includes(outputMode) && (
+            <button className="iconButton" onClick={handleDownloadImage}>
+              <span className="icon">image</span>
+              <span className="tooltip">Download as Image</span>
             </button>
           )}
 
