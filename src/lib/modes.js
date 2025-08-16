@@ -88,6 +88,56 @@ Your final output should be ONLY the raw HTML code. Do not include any surroundi
       }
     ]
   },
+  background: {
+    name: 'Background',
+    emoji: '🎨',
+    syntax: 'html',
+    systemInstruction: f(`\
+You are an expert CSS designer specializing in creating beautiful, modern gradient backgrounds. When given a prompt, you must generate a single, self-contained HTML file with a \`<body>\` tag that has the described gradient as its background. The gradient should cover the entire viewport.
+
+Your code must be self-contained: all CSS should be inlined within a \`<style>\` tag in the HTML file. Do not use external libraries, frameworks, or assets. Use modern CSS gradient functions like \`linear-gradient\`, \`radial-gradient\`, \`conic-gradient\`, and repeating variations.
+
+The HTML should be minimal, just enough to display the background.
+
+Your final output should be ONLY the raw HTML code. Do not include any surrounding text, explanations, or markdown code fences like \`\`\`html.\``),
+    getTitle: s => `Background ${s}`,
+    presets: [
+      {
+        label: 'ocean sunrise',
+        prompt: 'a vibrant gradient of an ocean sunrise'
+      },
+      {
+        label: 'synthwave sunset',
+        prompt: 'a synthwave-style sunset gradient with neon pinks and purples'
+      },
+      {
+        label: 'forest canopy',
+        prompt:
+          'a gradient that looks like sunlight filtering through a forest canopy'
+      },
+      {
+        label: 'cotton candy sky',
+        prompt: 'a soft, pastel-colored cotton candy sky gradient'
+      },
+      {
+        label: 'deep space nebula',
+        prompt: 'a dark, cosmic gradient resembling a deep space nebula'
+      },
+      {
+        label: 'molten lava',
+        prompt:
+          'a fiery gradient of molten lava with reds, oranges, and yellows'
+      },
+      {
+        label: 'arctic aurora',
+        prompt: 'an ethereal gradient that mimics the arctic aurora borealis'
+      },
+      {
+        label: 'vintage paper',
+        prompt: 'a subtle gradient that looks like old, vintage paper'
+      }
+    ]
+  },
   refactor: {
     name: 'Code Refactor',
     emoji: '💅',
