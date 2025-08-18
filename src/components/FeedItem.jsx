@@ -29,6 +29,11 @@ export default function FeedItem({round, onModifyPrompt, onViewFullScreen}) {
           <button
             className="iconButton"
             onClick={() => setShowSystemInstruction(!showSystemInstruction)}
+            aria-label={
+              showSystemInstruction
+                ? 'Hide system instruction'
+                : 'Show system instruction'
+            }
           >
             <span className="icon">assignment</span>
             <span className="tooltip">
@@ -38,6 +43,7 @@ export default function FeedItem({round, onModifyPrompt, onViewFullScreen}) {
 
           <button
             className="iconButton"
+            aria-label="Remove round"
             onClick={() => {
               if (
                 window.confirm('Are you sure you want to remove this round?')
@@ -52,13 +58,18 @@ export default function FeedItem({round, onModifyPrompt, onViewFullScreen}) {
 
           <button
             className="iconButton"
+            aria-label="Modify prompt"
             onClick={() => onModifyPrompt(round.prompt)}
           >
             <span className="icon">edit</span>
             <span className="tooltip">Modify prompt</span>
           </button>
 
-          <button className="iconButton" onClick={() => addRound(round.prompt)}>
+          <button
+            className="iconButton"
+            aria-label="Re-run prompt"
+            onClick={() => addRound(round.prompt)}
+          >
             <span className="icon">refresh</span>
             <span className="tooltip">Re-run prompt</span>
           </button>

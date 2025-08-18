@@ -365,6 +365,7 @@ export default function App() {
         <div>
           <button
             className="circleButton resetButton"
+            aria-label="Reset session"
             onClick={() => {
               reset()
               inputRef.current.value = ''
@@ -378,7 +379,11 @@ export default function App() {
 
         {!isIframe && (
           <div>
-            <button className="circleButton resetButton" onClick={toggleTheme}>
+            <button
+              className="circleButton resetButton"
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+            >
               <span className="icon">
                 {isDark ? 'light_mode' : 'dark_mode'}
               </span>

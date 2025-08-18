@@ -45,7 +45,7 @@ header {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
-  align-items: flex-end;
+  align-items: center;
   padding: 12px 20px;
   min-height: 82px;
   background: var(--glass-bg-primary);
@@ -269,9 +269,9 @@ header .temperatureControl input {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
-  padding: 2px;
-  aspect-ratio: 1;
+  width: 44px;
+  height: 44px;
+  font-size: 24px;
   border-radius: 50%;
   background: var(--bg-tertiary);
   color: var(--text-secondary);
@@ -666,6 +666,11 @@ button {
 button:focus {
   outline: none;
 }
+button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 button[disabled] {
   opacity: 0.5;
   cursor: not-allowed;
@@ -717,15 +722,17 @@ button .icon {
   background: var(--bg-quaternary);
   color: var(--text-senary);
   border-radius: 100px;
-  padding: 8px;
-  aspect-ratio: 1;
-  width: 36px;
-  font-size: 20px;
+  width: 44px;
+  height: 44px;
+  font-size: 24px;
   transition: all 0.2s ease-out;
 }
 .iconButton:hover {
   background: var(--bg-quinary);
   color: var(--text-primary);
+}
+.iconButton:focus-visible {
+  border-radius: 100px;
 }
 h1 {
   font-size: 22px;

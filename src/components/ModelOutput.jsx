@@ -142,14 +142,22 @@ function ModelOutput({
 
         <div className={c('outputActions', {active: outputData && !gotError})}>
           {outputMode === 'wireframe' && (
-            <button className="iconButton" onClick={handleDownload}>
+            <button
+              className="iconButton"
+              onClick={handleDownload}
+              aria-label="Download SVG"
+            >
               <span className="icon">download</span>
               <span className="tooltip">Download SVG</span>
             </button>
           )}
 
           {['html', 'background', 'refactor', 'clone'].includes(outputMode) && (
-            <button className="iconButton" onClick={handleDownloadImage}>
+            <button
+              className="iconButton"
+              onClick={handleDownloadImage}
+              aria-label="Download as Image"
+            >
               <span className="icon">image</span>
               <span className="tooltip">Download as Image</span>
             </button>
@@ -158,6 +166,7 @@ function ModelOutput({
           <button
             className="iconButton"
             onClick={() => startEditing(roundId, id)}
+            aria-label="Live edit"
           >
             <span className="icon">edit_note</span>
             <span className="tooltip">Live edit</span>
@@ -167,6 +176,7 @@ function ModelOutput({
             <button
               className="iconButton"
               onClick={() => onViewFullScreen(outputData)}
+              aria-label="View fullscreen"
             >
               <span className="icon">fullscreen</span>
               <span className="tooltip">View fullscreen</span>
@@ -176,6 +186,7 @@ function ModelOutput({
           <button
             className="iconButton"
             onClick={() => setShowSource(!showSource)}
+            aria-label={showSource ? 'View rendering' : 'View source'}
           >
             <span className="icon">{showSource ? 'visibility' : 'code'}</span>
             <span className="tooltip">
@@ -183,7 +194,11 @@ function ModelOutput({
             </span>
           </button>
 
-          <button className="iconButton" onClick={copySource}>
+          <button
+            className="iconButton"
+            onClick={copySource}
+            aria-label="Copy source"
+          >
             <span className="icon">content_copy</span>
             <span className="tooltip">
               {copied
