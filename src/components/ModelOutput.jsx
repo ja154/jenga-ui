@@ -29,6 +29,41 @@ function ModelOutput({
   const [copied, setCopied] = useState(false)
   const rendererRef = useRef(null)
 
+  const getFullScreenContent = () => {
+    if (outputMode === 'wireframe') {
+      return `
+        <html>
+          <head>
+            <style>
+              body { 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                background-color: transparent; 
+                margin: 0;
+                height: 100vh;
+                padding: 20px;
+                box-sizing: border-box;
+              }
+              svg { 
+                width: 100%; 
+                height: 100%;
+                max-width: 1400px;
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+              }
+            </style>
+          </head>
+          <body>
+            ${outputData}
+          </body>
+        </html>
+      `
+    }
+    return outputData
+  }
+
   const copySource = () => {
     navigator.clipboard.writeText(outputData.trim())
     setCopied(true)
@@ -122,7 +157,7 @@ function ModelOutput({
               ref={rendererRef}
               mode={outputMode}
               code={outputData}
-              onViewFullScreen={() => onViewFullScreen(outputData)}
+              onViewFullScreen={() => onViewFullScreen(getFullScreenContent())}
             />
           )}
         </div>
@@ -172,16 +207,14 @@ function ModelOutput({
             <span className="tooltip">Live edit</span>
           </button>
 
-          {outputMode !== 'wireframe' && (
-            <button
-              className="iconButton"
-              onClick={() => onViewFullScreen(outputData)}
-              aria-label="View fullscreen"
-            >
-              <span className="icon">fullscreen</span>
-              <span className="tooltip">View fullscreen</span>
-            </button>
-          )}
+          <button
+            className="iconButton"
+            onClick={() => onViewFullScreen(getFullScreenContent())}
+            aria-label="View fullscreen"
+          >
+            <span className="icon">fullscreen</span>
+            <span className="tooltip">View fullscreen</span>
+          </button>
 
           <button
             className="iconButton"
