@@ -36,7 +36,16 @@ export default function FeedItem({round, onModifyPrompt, onViewFullScreen}) {
             </span>
           </button>
 
-          <button className="iconButton" onClick={() => removeRound(round.id)}>
+          <button
+            className="iconButton"
+            onClick={() => {
+              if (
+                window.confirm('Are you sure you want to remove this round?')
+              ) {
+                removeRound(round.id)
+              }
+            }}
+          >
             <span className="icon">delete</span>
             <span className="tooltip">Remove</span>
           </button>

@@ -332,6 +332,17 @@ export default function App() {
           </div>
         </div>
 
+        <div>
+          <button
+            className="button primary floating"
+            onClick={handleGenerate}
+            aria-label="Generate output"
+          >
+            <span className="icon">auto_awesome</span>
+            Generate
+            <span className="tooltip right">Cmd/Ctrl + Enter</span>
+          </button>
+        </div>
 
         {batchMode && (
           <div>

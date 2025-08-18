@@ -45,7 +45,7 @@ header {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
-  align-items: stretch;
+  align-items: flex-end;
   padding: 12px 20px;
   min-height: 82px;
   background: var(--glass-bg-primary);
@@ -717,10 +717,10 @@ button .icon {
   background: var(--bg-quaternary);
   color: var(--text-senary);
   border-radius: 100px;
-  padding: 5px;
+  padding: 8px;
   aspect-ratio: 1;
-  width: 30px;
-  font-size: 17px;
+  width: 36px;
+  font-size: 20px;
   transition: all 0.2s ease-out;
 }
 .iconButton:hover {

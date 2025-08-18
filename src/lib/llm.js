@@ -10,7 +10,7 @@ const limit = pLimit(9);
 const timeoutMs = 193_333;
 const maxRetries = 5;
 const baseDelay = 1_233;
-const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
+const ai = new GoogleGenAI({apiKey: process.env.API_KEY});
 
 const safetySettings = [
   'HARM_CATEGORY_HATE_SPEECH',
