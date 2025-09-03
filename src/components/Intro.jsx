@@ -13,7 +13,7 @@ import {
 import models from '../lib/models'
 import useStore from '../lib/store'
 
-export default function Intro() {
+export default function Intro({inputSection}) {
   const batchModel = useStore.use.batchModel()
   const [presets] = useState(
     Object.fromEntries(
@@ -33,6 +33,8 @@ export default function Intro() {
         all from a simple text prompt. ✅ 👀 Try one of the examples below to get
         started:
       </p>
+
+      {inputSection}
 
       {Object.entries(modes).map(([key, mode]) => (
           <div key={key}>
