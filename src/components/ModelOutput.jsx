@@ -30,7 +30,7 @@ function ModelOutput({
   const rendererRef = useRef(null)
 
   const getFullScreenContent = () => {
-    if (outputMode === 'wireframe') {
+    if (['wireframe', 'favicon'].includes(outputMode)) {
       return `
         <html>
           <head>
@@ -75,7 +75,7 @@ function ModelOutput({
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'wireframe.svg'
+    a.download = `${outputMode}.svg`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -176,7 +176,7 @@ function ModelOutput({
         </div>
 
         <div className={c('outputActions', {active: outputData && !gotError})}>
-          {outputMode === 'wireframe' && (
+          {['wireframe', 'favicon'].includes(outputMode) && (
             <button
               className="iconButton"
               onClick={handleDownload}

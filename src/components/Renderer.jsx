@@ -24,7 +24,7 @@ const Renderer = forwardRef(function Renderer({mode, code, onViewFullScreen}, re
 
 
   const getSrcDoc = () => {
-    if (mode === 'wireframe') {
+    if (['wireframe', 'favicon'].includes(mode)) {
       return `
         <html>
           <head>

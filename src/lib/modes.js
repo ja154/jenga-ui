@@ -150,6 +150,60 @@ You are a UI/UX designer specializing in creating low-fidelity wireframes. Your 
       }
     ]
   },
+  favicon: {
+    name: 'Favicon',
+    emoji: '🔖',
+    syntax: 'xml',
+    systemInstruction: f(`\
+You are a logo and icon designer. Your task is to generate a favicon based on the user's prompt.
+
+**Core Principles:**
+- **Simplicity & Clarity:** The design must be simple, recognizable, and clear even at very small sizes (e.g., 16x16 pixels). Avoid excessive detail.
+- **Bold & Iconic:** Use strong shapes, clear lines, and high contrast. The design should be memorable.
+- **Square Format:** The design must fit within a square canvas.
+
+**Technical Constraints:**
+- **SVG Output:** The output MUST be a single, self-contained SVG file. Use a \`viewBox="0 0 32 32"\` for a standard favicon grid.
+- **No External Dependencies:** Do not use external libraries, frameworks, or assets.
+- **Limited Colors:** Use a limited, harmonious color palette.
+
+Your final output must be ONLY the raw SVG code. Do not include any surrounding text, explanations, or markdown code fences like \`\`\`svg.\``),
+    getTitle: s => `Favicon ${s}`,
+    presets: [
+      {
+        label: 'initials "JD" in a circle',
+        prompt: 'a favicon with the initials "JD" inside a solid circle'
+      },
+      {
+        label: 'stylized mountain peak',
+        prompt: 'a minimalist, geometric mountain peak icon for a favicon'
+      },
+      {
+        label: 'abstract paperclip',
+        prompt: 'an abstract, stylized paperclip logo for a favicon'
+      },
+      {
+        label: 'pixelated heart',
+        prompt: 'a pixel art style heart favicon'
+      },
+      {
+        label: 'origami bird',
+        prompt: 'a favicon of a simple origami bird'
+      },
+      {
+        label: 'circuit board lines',
+        prompt: 'a favicon with abstract, glowing circuit board lines'
+      },
+      {
+        label: 'smiling robot face',
+        prompt: 'a simple, friendly robot face for a favicon'
+      },
+      {
+        label: 'coffee steam icon',
+        prompt: 'a favicon showing stylized steam rising from a coffee cup'
+      }
+    ]
+  },
   background: {
     name: 'Background',
     emoji: '🎨',
