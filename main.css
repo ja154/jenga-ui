@@ -1054,14 +1054,3 @@ summary {
   border: none;
   background: var(--bg-primary);
 }
-
-.intro .input-area {
-  background: none;
-  border: none;
-  padding: 0;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border-radius: 0;
-  max-width: 100%;
-  width: 100%;
-}
