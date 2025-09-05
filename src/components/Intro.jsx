@@ -25,9 +25,9 @@ export default function Intro({inputSection}) {
   )
 
   return (
-    <section className="intro">
-      <h2>👋 Welcome to JengaUi 🧱</h2>
-      <p>
+    <section className="flex flex-col gap-10 items-center justify-center text-center max-w-6xl w-full mx-auto bg-glass-bg-secondary border border-glass-border-primary rounded-xl p-10 backdrop-blur-xl">
+      <h2 className="text-2xl">👋 Welcome to JengaUi 🧱</h2>
+      <p className="text-sm leading-loose max-w-2xl">
         This is a playground where you can generate anything from simple UI
         components to complex, full-page layouts for applications and websites,
         all from a simple text prompt. ✅ 👀 Try one of the examples below to get
@@ -38,12 +38,12 @@ export default function Intro({inputSection}) {
 
       {Object.entries(modes).map(([key, mode]) => (
           <div key={key}>
-            <h3>
+            <h3 className="mb-5">
               {mode.emoji} {mode.name}
             </h3>
 
-            <div className="selector presetList">
-              <ul className="presets wrapped">
+            <div className="static transform-none bg-none border-none p-0 max-h-none max-w-none w-auto h-auto">
+              <ul className="flex flex-wrap flex-row gap-2 justify-center">
                 {presets[key].map(({label, prompt}) => (
                   <li key={label}>
                     <button
@@ -56,7 +56,7 @@ export default function Intro({inputSection}) {
 
                         addRound(prompt)
                       }}
-                      className="chip"
+                      className="whitespace-normal py-2 px-2.5 rounded-md bg-bg-quaternary text-text-primary text-left leading-normal hover:brightness-[var(--hover-brightness)]"
                     >
                       {label}
                     </button>

@@ -86,14 +86,15 @@ export default function App() {
 
   useEffect(() => {
     if (!isIframe) {
-      document.documentElement.style.colorScheme = isDark ? 'dark' : 'light'
+      document.documentElement.classList.toggle('dark', isDark);
+      document.documentElement.classList.toggle('light', !isDark);
     }
   }, [isDark])
 
   const inputSection = (
-    <section className="input-area">
+    <section className="flex flex-wrap gap-[15px] items-end justify-center w-full max-w-6xl bg-glass-bg-secondary border border-glass-border-primary rounded-xl p-5 backdrop-blur-xl">
       <div
-        className="selectorWrapper"
+        className="relative flex flex-col gap-1.5"
         onMouseEnter={!isTouch && (() => setShowOutputModes(true))}
         onMouseLeave={!isTouch && (() => setShowOutputModes(false))}
         onTouchStart={
@@ -107,15 +108,15 @@ export default function App() {
             : null
         }
       >
-        <p>
+        <p className="flex items-center border border-border-primary whitespace-nowrap rounded-md py-2.5 pr-9 pl-2.5 min-w-[145px] cursor-default h-9 after:content-['▾'] after:absolute after:scale-y-100 after:scale-x-140 after:top-1/2 after:right-2.5 after:-translate-y-1/2 after:text-text-tertiary">
           {modes[outputMode].emoji} {modes[outputMode].name}
         </p>
-        <div className={c('selector', {active: showOutputModes})}>
-          <ul>
+        <div className={c('absolute bottom-12 w-fit bg-bg-primary border border-border-primary rounded-md p-2.5 max-h-[30vh] overflow-auto opacity-0 transition-all duration-200 ease-out pointer-events-none z-10 translate-y-1.5 origin-bottom max-w-[70vw]', {'opacity-100 pointer-events-auto translate-y-0': showOutputModes})}>
+          <ul className="flex flex-col gap-2">
             {Object.keys(modes).map(key => (
               <li key={key}>
                 <button
-                  className={c('chip', {primary: key === outputMode})}
+                  className={c('py-2 px-2.5 rounded-md bg-bg-quaternary text-text-primary text-left leading-normal whitespace-nowrap hover:brightness-[var(--hover-brightness)]', {'bg-primary text-white': key === outputMode})}
                   onClick={() => {
                     setOutputMode(key)
                     setShowOutputModes(false)
@@ -127,11 +128,11 @@ export default function App() {
             ))}
           </ul>
         </div>
-        <div className="label">Output</div>
+        <div className="text-xs text-text-tertiary">Output</div>
       </div>
 
       <div
-        className="selectorWrapper"
+        className="relative flex flex-col gap-1.5"
         onMouseEnter={!isTouch && (() => setShowModels(true))}
         onMouseLeave={!isTouch && (() => setShowModels(false))}
         onTouchStart={
@@ -145,19 +146,19 @@ export default function App() {
             : null
         }
       >
-        <p>
+        <p className="flex items-center border border-border-primary whitespace-nowrap rounded-md py-2.5 pr-9 pl-2.5 min-w-[145px] cursor-default h-9 after:content-['▾'] after:absolute after:scale-y-100 after:scale-x-140 after:top-1/2 after:right-2.5 after:-translate-y-1/2 after:text-text-tertiary">
           {batchMode
             ? models[batchModel].name
             : Object.keys(versusModels).filter(key => versusModels[key])
                 .length + ' selected'}
         </p>
-        <div className={c('selector', {active: showModels})}>
-          <ul>
+        <div className={c('absolute bottom-12 w-fit bg-bg-primary border border-border-primary rounded-md p-2.5 max-h-[30vh] overflow-auto opacity-0 transition-all duration-200 ease-out pointer-events-none z-10 translate-y-1.5 origin-bottom max-w-[70vw]', {'opacity-100 pointer-events-auto translate-y-0': showModels})}>
+          <ul className="flex flex-col gap-2">
             {Object.keys(models).map(key => (
               <li key={key}>
                 <button
-                  className={c('chip', {
-                    primary: batchMode
+                  className={c('py-2 px-2.5 rounded-md bg-bg-quaternary text-text-primary text-left leading-normal whitespace-nowrap hover:brightness-[var(--hover-brightness)]', {
+                    'bg-primary text-white': batchMode
                       ? key === batchModel
                       : versusModels[key]
                   })}
@@ -176,12 +177,12 @@ export default function App() {
             ))}
           </ul>
         </div>
-        <div className="label">Model{batchMode ? '' : 's'}</div>
+        <div className="text-xs text-text-tertiary">Model{batchMode ? '' : 's'}</div>
       </div>
 
-      <div>
-        <div className="rangeWrap">
-          <div className="temperatureControl">
+      <div className="flex flex-col min-w-[150px]">
+        <div className="flex-1 flex items-center">
+          <div className="flex items-center gap-2 mb-1.5 w-full">
             <input
               type="range"
               min={0}
@@ -193,11 +194,11 @@ export default function App() {
             {temperature.toFixed(1)}
           </div>
         </div>
-        <div className="label">Creativity</div>
+        <div className="text-xs text-text-tertiary">Creativity</div>
       </div>
 
       <div
-        className="selectorWrapper prompt"
+        className="relative flex flex-col gap-1.5 flex-grow flex-shrink basis-52 min-w-52"
         onMouseEnter={!isTouch && (() => setShowPresets(true))}
         onMouseLeave={!isTouch && (() => setShowPresets(false))}
         onTouchStart={
@@ -211,10 +212,10 @@ export default function App() {
             : null
         }
       >
-        <div className="prompt-input-container">
+        <div className="flex flex-col gap-1.5">
           {outputMode === 'clone' && (
             <input
-              className="promptInput url-input"
+              className="border border-primary p-2.5 rounded-md text-xs w-full h-9 overflow-hidden focus:bg-white/5"
               placeholder="URL to clone or Figma frame link"
               value={cloneUrl}
               onChange={e => setCloneUrl(e.target.value)}
@@ -229,7 +230,7 @@ export default function App() {
 
           {['refactor', 'clone'].includes(outputMode) ? (
             <textarea
-              className="promptInput"
+              className="border border-primary p-2.5 rounded-md text-xs w-full h-20 min-h-9 resize-y focus:bg-white/5"
               placeholder={
                 outputMode === 'clone'
                   ? 'Describe your desired changes... (Cmd/Ctrl+Enter)'
@@ -246,7 +247,7 @@ export default function App() {
             />
           ) : (
             <input
-              className="promptInput"
+              className="border border-primary p-2.5 rounded-md text-xs w-full h-9 overflow-hidden focus:bg-white/5"
               placeholder="e.g., a futuristic dashboard UI"
               onFocus={!isTouch && (() => setShowPresets(false))}
               ref={inputRef}
@@ -259,8 +260,8 @@ export default function App() {
             />
           )}
         </div>
-        <div className={c('selector', {active: showPresets})}>
-          <ul className="presets wrapped">
+        <div className={c('absolute bottom-12 w-fit bg-bg-primary border border-border-primary rounded-md p-2.5 max-h-[370px] overflow-auto opacity-0 transition-all duration-200 ease-out pointer-events-none z-10 translate-y-1.5 origin-bottom max-w-[70vw]', {'opacity-100 pointer-events-auto translate-y-0': showPresets})}>
+          <ul className="flex flex-col gap-2 presets wrapped">
             {outputMode === 'html' && (
               <li>
                 <button
@@ -272,7 +273,7 @@ export default function App() {
                     addRound(randomPrompt);
                     setShowPresets(false);
                   }}
-                  className="chip primary"
+                  className="py-2 px-2.5 rounded-md bg-primary text-white text-left leading-normal whitespace-nowrap flex items-center gap-1"
                 >
                   <span className="icon">Ifl</span>
                   Random prompt
@@ -290,7 +291,7 @@ export default function App() {
                     }
                     setShowPresets(false);
                   }}
-                  className="chip"
+                  className="py-2 px-2.5 rounded-md bg-bg-quaternary text-text-primary text-left leading-normal whitespace-nowrap hover:brightness-[var(--hover-brightness)]"
                 >
                   {label}
                 </button>
@@ -298,16 +299,16 @@ export default function App() {
             ))}
           </ul>
         </div>
-        <div className="label">
+        <div className="text-xs text-text-tertiary">
           {outputMode === 'clone' ? 'URL & Prompt' :
           outputMode === 'refactor' ? 'Code' :
           'Prompt'}
         </div>
       </div>
 
-      <div>
+      <div className="flex flex-col">
         <button
-          className="button primary floating"
+          className="inline-flex py-2.5 px-2.5 rounded-lg gap-1 items-center justify-center bg-primary text-white relative transition-all filter hover:brightness-110 active:top-px active:brightness-90 animate-float"
           onClick={handleGenerate}
           aria-label="Generate output"
         >
@@ -318,20 +319,21 @@ export default function App() {
       </div>
 
       {batchMode && (
-        <div>
-          <div className="rangeWrap">
-            <div className="batchSize">
+        <div className="flex flex-col">
+          <div className="flex-1 flex items-center">
+            <div className="flex items-center gap-2 mb-1.5">
               <input
                 type="range"
                 min={1}
                 max={9}
                 value={batchSize}
                 onChange={e => setBatchSize(e.target.valueAsNumber)}
+                className="w-[70px] p-0"
               />{' '}
               {batchSize}
             </div>
           </div>
-          <div className="label">Batch size</div>
+          <div className="text-xs text-text-tertiary">Batch size</div>
         </div>
       )}
     </section>
@@ -340,7 +342,7 @@ export default function App() {
 
   return (
     <div className={isIframe ? '' : isDark ? 'dark' : 'light'}>
-      <header>
+      <header className="sticky top-0 left-0 right-0 z-20 flex flex-wrap gap-4 items-center justify-between p-3 px-5 min-h-[82px] bg-glass-bg-primary border-b border-glass-border-primary backdrop-blur-xl text-text-primary">
         <div>
           <h1>
             <p>
@@ -350,28 +352,28 @@ export default function App() {
           </h1>
         </div>
 
-        <div>
-          <div className="toggle">
+        <div className="flex flex-col justify-between gap-1.5">
+          <div className="flex gap-px whitespace-nowrap">
             <button
-              className={c('button', {primary: batchMode})}
+              className={c('inline-flex py-2.5 px-2.5 rounded-lg gap-1 items-center justify-center relative transition-all filter hover:brightness-110 active:top-px active:brightness-90 text-xs rounded-r-none', batchMode ? 'bg-primary text-white' : 'bg-bg-quaternary text-text-tertiary')}
               onClick={() => setBatchMode(true)}
             >
               <span className="icon">stacks</span> Batch
             </button>
             <button
-              className={c('button', {primary: !batchMode})}
+              className={c('inline-flex py-2.5 px-2.5 rounded-lg gap-1 items-center justify-center relative transition-all filter hover:brightness-110 active:top-px active:brightness-90 text-xs rounded-l-none', !batchMode ? 'bg-primary text-white' : 'bg-bg-quaternary text-text-tertiary')}
               onClick={() => setBatchMode(false)}
             >
               <span className="icon">swords</span> Versus
             </button>
           </div>
-          <div className="label">Mode</div>
+          <div className="text-xs text-text-tertiary">Mode</div>
         </div>
 
         <div style={{display: 'flex', gap: '15px'}}>
-          <div>
+          <div className="flex flex-col justify-between gap-1.5">
             <button
-              className="circleButton resetButton"
+              className="flex items-center justify-center w-11 h-11 text-2xl rounded-full bg-bg-tertiary text-text-secondary border border-border-primary hover:bg-bg-quaternary hover:text-text-primary hover:border-border-secondary"
               aria-label="Reset session"
               onClick={() => {
                 reset()
@@ -381,13 +383,13 @@ export default function App() {
             >
               <span className="icon">replay</span>
             </button>
-            <div className="label">Reset</div>
+            <div className="text-xs text-text-tertiary">Reset</div>
           </div>
 
           {!isIframe && (
-            <div>
+            <div className="flex flex-col justify-between gap-1.5">
               <button
-                className="circleButton resetButton"
+                className="flex items-center justify-center w-11 h-11 text-2xl rounded-full bg-bg-tertiary text-text-secondary border border-border-primary hover:bg-bg-quaternary hover:text-text-primary hover:border-border-secondary"
                 onClick={toggleTheme}
                 aria-label="Toggle theme"
               >
@@ -395,7 +397,7 @@ export default function App() {
                   {isDark ? 'light_mode' : 'dark_mode'}
                 </span>
               </button>
-              <div className="label">Theme</div>
+              <div className="text-xs text-text-tertiary">Theme</div>
             </div>
           )}
         </div>
@@ -407,7 +409,7 @@ export default function App() {
         ) : (
           <>
             {inputSection}
-            <ul className="feed">
+            <ul className="flex flex-col gap-5 items-center w-full">
               {feed.map(round => (
                 <FeedItem
                   key={round.id}

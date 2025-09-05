@@ -56,12 +56,25 @@ const Renderer = forwardRef(function Renderer({mode, code, onViewFullScreen}, re
   }
 
   return (
-    <div className={`renderer ${mode}Renderer`} onClick={onViewFullScreen}>
+    <div className={mode === 'html' ? 'htmlRenderer' : 'w-full h-full bg-bg-primary'} onClick={onViewFullScreen}>
       <iframe
+        className={mode === 'html' ? '' : 'w-full h-full object-contain'}
         sandbox="allow-same-origin allow-scripts"
         loading="lazy"
         srcDoc={getSrcDoc()}
         ref={ref}
+        style={{
+          border: 'none',
+          background: 'var(--bg-primary)',
+          ...(mode === 'html' ? {
+            aspectRatio: '4/3',
+            transformOrigin: '0 0',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            overflow: 'hidden',
+          } : {})
+        }}
       />
 
       {showError && (
