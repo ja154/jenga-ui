@@ -40,7 +40,25 @@ export default function App() {
   const [showPresets, setShowPresets] = useState(false)
   const [showModels, setShowModels] = useState(false)
   const [showOutputModes, setShowOutputModes] = useState(false)
-  const [isDark, setIsDark] = useState(true)
+  const [isDark, setIsDark] = useState(() => {
+    if (isIframe) {
+      return true; // Default to dark theme in iframes
+    }
+    try {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        return savedTheme === 'dark';
+      }
+    } catch (e) {
+      // localStorage can be blocked by browser settings
+      console.warn('Could not access localStorage for theme', e);
+    }
+    // Check for system preference. Default to dark if not supported.
+    if (window.matchMedia) {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return true;
+  });
   const [fullscreenOutput, setFullscreenOutput] = useState(null)
   const [cloneUrl, setCloneUrl] = useState('')
 
@@ -67,8 +85,18 @@ export default function App() {
   }, [outputMode, cloneUrl]);
 
   const toggleTheme = useCallback(() => {
-    setIsDark(!isDark)
-  }, [isDark])
+    setIsDark(prevIsDark => {
+      const newIsDark = !prevIsDark;
+      if (!isIframe) {
+        try {
+          localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
+        } catch (e) {
+          console.warn('Could not save theme to localStorage', e);
+        }
+      }
+      return newIsDark;
+    });
+  }, []);
 
   useEffect(() => {
     shufflePresets()
@@ -391,7 +419,7 @@ export default function App() {
               <button
                 className="flex items-center justify-center w-11 h-11 text-2xl rounded-full bg-bg-tertiary text-text-secondary border border-border-primary hover:bg-bg-quaternary hover:text-text-primary hover:border-border-secondary"
                 onClick={toggleTheme}
-                aria-label="Toggle theme"
+                aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
               >
                 <span className="icon">
                   {isDark ? 'light_mode' : 'dark_mode'}
