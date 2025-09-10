@@ -25,7 +25,8 @@ async function generate({
   prompt,
   thinking,
   thinkingCapable,
-  temperature
+  temperature,
+  useGoogleSearch
 }) {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
@@ -43,6 +44,10 @@ async function generate({
         },
       };
 
+      if (useGoogleSearch) {
+        genConfig.config.tools = [{googleSearch: {}}];
+      }
+
       // Only add thinkingConfig if the model is capable and we specifically want to disable thinking
       if (thinkingCapable && !thinking) {
           genConfig.config.thinkingConfig = { thinkingBudget: 0 };
@@ -53,7 +58,10 @@ async function generate({
       const response = await Promise.race([responsePromise, timeoutPromise]);
 
       if (response && typeof response.text === 'string') {
-        return response.text;
+        return {
+          text: response.text,
+          groundingChunks: response.candidates?.[0]?.groundingMetadata?.groundingChunks
+        };
       }
       
       console.warn('API returned unexpected response structure:', response);

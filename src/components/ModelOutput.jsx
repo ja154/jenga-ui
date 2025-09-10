@@ -22,7 +22,8 @@ function ModelOutput({
   startTime,
   totalTime,
   gotError,
-  onViewFullScreen
+  onViewFullScreen,
+  groundingChunks
 }) {
   const [time, setTime] = useState(0)
   const [showSource, setShowSource] = useState(false)
@@ -246,6 +247,33 @@ function ModelOutput({
           </button>
         </div>
       </div>
+
+      {groundingChunks && groundingChunks.length > 0 && (
+        <div className="mt-2.5 border-t border-border-primary pt-2.5">
+          <h4 className="text-xs font-bold text-text-secondary mb-1.5 flex items-center gap-1.5">
+            <span className="icon">travel_explore</span>
+            Inspiration from the web
+          </h4>
+          <ul className="flex flex-col gap-1 text-xs">
+            {groundingChunks.map((chunk, index) => (
+              chunk.web?.uri && (
+                <li key={index} className="flex items-start gap-1.5">
+                  <span className="icon text-sm text-text-tertiary relative top-px">link</span>
+                  <a
+                    href={chunk.web.uri}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                    title={chunk.web.title || chunk.web.uri}
+                  >
+                    {chunk.web.title || new URL(chunk.web.uri).hostname}
+                  </a>
+                </li>
+              )
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }

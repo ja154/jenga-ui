@@ -92,6 +92,7 @@ const newOutput = (model, mode, isBatch) => ({
   id: crypto.randomUUID(),
   startTime: Date.now(),
   outputData: null,
+  groundingChunks: null,
   isBusy: true,
   gotError: false,
   outputMode: mode,
@@ -229,7 +230,8 @@ export const addRound = async (prompt, options = {}) => {
         thinkingCapable: models[output.model].thinkingCapable,
         systemInstruction: newRound.systemInstruction,
         prompt: llmPrompt,
-        temperature
+        temperature,
+        useGoogleSearch: modes[outputMode].useGoogleSearch
       })
     } catch (e) {
       set(state => {
@@ -252,10 +254,11 @@ export const addRound = async (prompt, options = {}) => {
         return
       }
       const targetOutput = round.outputs[i]
-      targetOutput.outputData = res
+      targetOutput.outputData = res.text
         .replace(/```\w+/gm, '')
         .replace(/```\n?$/gm, '')
         .trim()
+      targetOutput.groundingChunks = res.groundingChunks;
       targetOutput.isBusy = false
       targetOutput.totalTime = Date.now() - targetOutput.startTime
     })
@@ -373,7 +376,7 @@ export const applyAIChatEdit = async userPrompt => {
       temperature
     })
 
-    const newCode = res
+    const newCode = res.text
       .replace(/```\w+/gm, '')
       .replace(/```\n?$/gm, '')
       .trim()
