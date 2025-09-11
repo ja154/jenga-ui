@@ -25,7 +25,7 @@ export default function Intro({inputSection}) {
   )
 
   return (
-    <section className="flex flex-col gap-10 items-center justify-center text-center max-w-6xl w-full mx-auto bg-glass-bg-secondary border border-glass-border-primary rounded-xl p-10 backdrop-blur-xl">
+    <section className="flex flex-col gap-10 items-center justify-center text-center max-w-6xl w-full mx-auto bg-glass-bg-secondary border border-glass-border-primary rounded-2xl p-10 backdrop-blur-xl glow-card">
       <h2 className="text-2xl">👋 Welcome to JengaUi 🧱</h2>
       <p className="text-sm leading-loose max-w-2xl">
         This is a playground where you can generate anything from simple UI
@@ -56,7 +56,7 @@ export default function Intro({inputSection}) {
 
                         addRound(prompt)
                       }}
-                      className="whitespace-normal py-2 px-2.5 rounded-md bg-bg-quaternary text-text-primary text-left leading-normal hover:brightness-[var(--hover-brightness)]"
+                      className="whitespace-normal py-2 px-2.5 rounded-lg bg-bg-quaternary text-text-primary text-left leading-normal hover:brightness-[var(--hover-brightness)]"
                     >
                       {label}
                     </button>

@@ -39,7 +39,6 @@ tailwind.config = {
       fontFamily: {
         sans: ['"Google Sans Display"', 'sans-serif'],
         mono: ['"Google Sans Mono"', 'monospace'],
-        'space-mono': ['"Space Mono"', 'monospace'],
       },
       keyframes: {
         gradientFlow: {

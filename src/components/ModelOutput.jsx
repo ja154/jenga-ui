@@ -120,7 +120,7 @@ function ModelOutput({
 
   return (
     <div className="flex flex-col gap-2.5">
-      <div className={c('z-10 flex-1 aspect-[4/3] relative [perspective:2000px] [transform-style:preserve-3d] rounded-md', {'[transform:rotateY(180deg)]': showSource})}>
+      <div className={c('z-10 flex-1 aspect-[4/3] relative [perspective:2000px] [transform-style:preserve-3d] rounded-lg glow-card-inner', {'[transform:rotateY(180deg)]': showSource})}>
         <div className="flex items-center justify-center outline-3 outline-transparent transition-all duration-200 ease-out border border-border-secondary rounded-inherit overflow-hidden absolute inset-0 [backface-visibility:hidden] [transform:rotateY(-180deg)] bg-bg-tertiary z-[1]">
           <pre className="w-full h-full p-2.5 text-xs leading-relaxed overflow-auto">
           <SyntaxHighlighter
@@ -146,7 +146,7 @@ function ModelOutput({
                     ? 'Fetch Error'
                     : 'Response Error'}
               </p>
-              {outputData && <div className="text-xs text-text-tertiary bg-bg-tertiary p-2.5 rounded-md max-w-full overflow-auto text-left whitespace-pre-wrap break-all">{outputData}</div>}
+              {outputData && <div className="text-xs text-text-tertiary bg-bg-tertiary p-2.5 rounded-lg max-w-full overflow-auto text-left whitespace-pre-wrap break-all">{outputData}</div>}
             </div>
           )}
 
@@ -184,7 +184,7 @@ function ModelOutput({
         <div className={c('flex items-center gap-2 opacity-0 transition-opacity duration-200 ease-out pointer-events-none', {'opacity-100 pointer-events-auto': outputData && !gotError})}>
           {['wireframe', 'favicon'].includes(outputMode) && (
             <button
-              className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-11 h-11 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
+              className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-10 h-10 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
               onClick={handleDownload}
               aria-label="Download SVG"
             >
@@ -195,7 +195,7 @@ function ModelOutput({
 
           {['html', 'background', 'refactor', 'clone'].includes(outputMode) && (
             <button
-              className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-11 h-11 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
+              className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-10 h-10 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
               onClick={handleDownloadImage}
               aria-label="Download as Image"
             >
@@ -205,7 +205,7 @@ function ModelOutput({
           )}
 
           <button
-            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-11 h-11 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
+            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-10 h-10 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
             onClick={() => startEditing(roundId, id)}
             aria-label="Live edit"
           >
@@ -214,7 +214,7 @@ function ModelOutput({
           </button>
 
           <button
-            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-11 h-11 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
+            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-10 h-10 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
             onClick={() => onViewFullScreen(getFullScreenContent())}
             aria-label="View fullscreen"
           >
@@ -223,7 +223,7 @@ function ModelOutput({
           </button>
 
           <button
-            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-11 h-11 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
+            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-10 h-10 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
             onClick={() => setShowSource(!showSource)}
             aria-label={showSource ? 'View rendering' : 'View source'}
           >
@@ -234,7 +234,7 @@ function ModelOutput({
           </button>
 
           <button
-            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-11 h-11 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
+            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-10 h-10 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
             onClick={copySource}
             aria-label="Copy source"
           >

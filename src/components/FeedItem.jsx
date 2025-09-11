@@ -12,7 +12,7 @@ export default function FeedItem({round, onModifyPrompt, onViewFullScreen}) {
   const [showSystemInstruction, setShowSystemInstruction] = useState(false)
 
   return (
-    <li className="w-full flex flex-col gap-2.5 bg-glass-bg-secondary border border-glass-border-primary p-3 px-5 rounded-lg animate-fadeInUp">
+    <li className="w-full flex flex-col gap-2.5 bg-glass-bg-secondary border border-glass-border-primary p-5 rounded-lg animate-fadeInUp glow-card">
       <div className={c('flex items-center justify-between gap-4', {'items-start': showSystemInstruction})}>
         <h3 className={c('text-sm leading-normal flex items-center gap-2.5', {'items-start': showSystemInstruction})}>
           <div className="bg-bg-septenary text-text-secondary py-1 px-2.5 text-xs rounded-full inline-flex items-center gap-1 whitespace-nowrap">
@@ -27,7 +27,7 @@ export default function FeedItem({round, onModifyPrompt, onViewFullScreen}) {
         </h3>
         <div className="flex items-center gap-2.5">
           <button
-            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-11 h-11 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
+            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-10 h-10 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
             onClick={() => setShowSystemInstruction(!showSystemInstruction)}
             aria-label={
               showSystemInstruction
@@ -42,7 +42,7 @@ export default function FeedItem({round, onModifyPrompt, onViewFullScreen}) {
           </button>
 
           <button
-            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-11 h-11 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
+            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-10 h-10 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
             aria-label="Remove round"
             onClick={() => {
               if (
@@ -57,7 +57,7 @@ export default function FeedItem({round, onModifyPrompt, onViewFullScreen}) {
           </button>
 
           <button
-            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-11 h-11 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
+            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-10 h-10 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
             aria-label="Modify prompt"
             onClick={() => onModifyPrompt(round.prompt)}
           >
@@ -66,7 +66,7 @@ export default function FeedItem({round, onModifyPrompt, onViewFullScreen}) {
           </button>
 
           <button
-            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-11 h-11 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
+            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-10 h-10 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
             aria-label="Re-run prompt"
             onClick={() => addRound(round.prompt)}
           >

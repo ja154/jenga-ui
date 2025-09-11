@@ -90,11 +90,11 @@ export default function Editor() {
           Live Editor
         </h2>
         <div className="flex gap-2.5">
-          <button className="inline-flex py-2.5 px-2.5 rounded-lg gap-1 items-center justify-center bg-bg-senary text-text-quinary relative transition-all filter hover:brightness-110 active:top-px active:brightness-90" onClick={stopEditing}>
+          <button className="inline-flex py-2.5 px-3 rounded-lg gap-1 items-center justify-center bg-bg-senary text-text-quinary relative transition-all filter hover:brightness-110 active:top-px active:brightness-90" onClick={stopEditing}>
             <span className="icon">close</span> Close
           </button>
           <button
-            className="inline-flex py-2.5 px-2.5 rounded-lg gap-1 items-center justify-center bg-primary text-white relative transition-all filter hover:brightness-110 active:top-px active:brightness-90"
+            className="inline-flex py-2.5 px-4 rounded-lg gap-1 items-center justify-center bg-primary text-white relative transition-all filter hover:brightness-110 active:top-px active:brightness-90"
             onClick={saveAndStopEditing}
             disabled={isBusy}
           >
@@ -116,7 +116,7 @@ export default function Editor() {
           <div className="flex-shrink-0 p-2.5 px-4 border-t border-border-primary bg-bg-tertiary">
             <form className="flex items-center gap-2.5" onSubmit={handleTextSubmit}>
               <input
-                className="flex-grow bg-bg-secondary p-2.5 rounded-md border border-border-secondary focus:border-primary"
+                className="flex-grow bg-bg-secondary p-2.5 rounded-lg border border-border-secondary focus:border-primary"
                 type="text"
                 value={chatPrompt}
                 onChange={e => setChatPrompt(e.target.value)}
