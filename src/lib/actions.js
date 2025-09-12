@@ -95,6 +95,7 @@ const newOutput = (model, mode, isBatch) => ({
   groundingChunks: null,
   isBusy: true,
   gotError: false,
+  errorDetails: null,
   outputMode: mode,
   rating: 0,
   isFavorite: false,
@@ -183,6 +184,11 @@ export const addRound = async (prompt, options = {}) => {
             output.gotError = true
             output.totalTime = Date.now() - output.startTime
             output.outputData = `Failed to process Figma link.\n\nError: ${e.message}`
+            output.errorDetails = {
+              type: 'FIGMA',
+              title: 'Figma Error',
+              suggestion: 'Could not process the Figma link. Please ensure the URL is correct, the file is public, and the link points to a specific frame.'
+            };
           })
         }
       })
@@ -208,6 +214,11 @@ export const addRound = async (prompt, options = {}) => {
             output.gotError = true
             output.totalTime = Date.now() - output.startTime
             output.outputData = `Failed to fetch URL: ${cloneUrl}\n\nError: ${e.message}`
+            output.errorDetails = {
+              type: 'FETCH_URL',
+              title: 'URL Fetch Error',
+              suggestion: 'Could not fetch content from the URL. Please check if the URL is correct and publicly accessible.'
+            };
           })
         }
       })
@@ -234,17 +245,47 @@ export const addRound = async (prompt, options = {}) => {
         useGoogleSearch: modes[outputMode].useGoogleSearch
       })
     } catch (e) {
+      const errorDetails = {
+        type: 'UNKNOWN',
+        title: 'Unknown Error',
+        suggestion: 'An unexpected error occurred. Check the console and try again.'
+      };
+      const message = e.message ? e.message.toLowerCase() : '';
+    
+      if (message.includes('timed out')) {
+        errorDetails.type = 'TIMEOUT';
+        errorDetails.title = 'Request Timed Out';
+        errorDetails.suggestion = 'The request took too long. This can happen with complex prompts. Try simplifying your request or try again.';
+      } else if (message.includes('safety')) {
+        errorDetails.type = 'SAFETY';
+        errorDetails.title = 'Response Blocked';
+        errorDetails.suggestion = 'The response was blocked for safety reasons. Please rephrase your prompt.';
+      } else if (message.includes('api key not valid')) {
+        errorDetails.type = 'API_KEY';
+        errorDetails.title = 'Invalid API Key';
+        errorDetails.suggestion = 'The API key is not valid. Please ensure it is correctly configured.';
+      } else if (message.includes('fetch')) {
+        errorDetails.type = 'NETWORK';
+        errorDetails.title = 'Network Error';
+        errorDetails.suggestion = 'Could not connect to the API. Check your internet connection and try again.';
+      } else if (message.includes('invalid response')) {
+        errorDetails.type = 'API_RESPONSE';
+        errorDetails.title = 'Invalid Response';
+        errorDetails.suggestion = 'The API returned an unexpected response. This might be a temporary issue. Please try again.';
+      }
+    
       set(state => {
         const round = state.feed.find(round => round.id === newRound.id)
-        if (!round) {
-          return
-        }
-        const targetOutput = round.outputs[i]
-        targetOutput.isBusy = false
-        targetOutput.gotError = true
-        targetOutput.totalTime = Date.now() - targetOutput.startTime
-      })
-      return
+        if (!round) return;
+        
+        const targetOutput = round.outputs[i];
+        targetOutput.isBusy = false;
+        targetOutput.gotError = true;
+        targetOutput.totalTime = Date.now() - targetOutput.startTime;
+        targetOutput.outputData = e.message; // Keep raw message for details
+        targetOutput.errorDetails = errorDetails; // Add structured error info
+      });
+      return;
     }
 
     set(state => {

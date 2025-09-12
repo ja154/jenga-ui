@@ -22,6 +22,7 @@ function ModelOutput({
   startTime,
   totalTime,
   gotError,
+  errorDetails,
   onViewFullScreen,
   groundingChunks
 }) {
@@ -135,18 +136,26 @@ function ModelOutput({
 
         <div className={c("flex items-center justify-center outline-3 outline-transparent transition-all duration-200 ease-out border border-border-secondary rounded-inherit overflow-hidden absolute inset-0 [backface-visibility:hidden] transition-transform", {'[transform:rotateY(0deg)]': showSource})}>
           {gotError && (
-            <div className="absolute inset-0 p-5 bg-bg-primary z-20 flex items-center justify-center flex-col gap-1.5 text-center">
-              <p className="flex items-center gap-1.5 p-1.5 text-text-secondary leading-normal">
-                <span className="icon text-text-primary text-2xl">error</span>
+            <div className="absolute inset-0 p-5 bg-bg-primary z-20 flex items-center justify-center flex-col gap-2 text-center">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-error/10 mb-2">
+                <span className="icon text-error text-3xl">error</span>
+              </div>
+              <h4 className="font-bold text-text-primary">
+                {errorDetails?.title || 'An Error Occurred'}
+              </h4>
+              <p className="text-xs text-text-secondary max-w-xs">
+                {errorDetails?.suggestion || 'Something went wrong. Please try again.'}
               </p>
-              <p className="flex items-center gap-1.5 p-1.5 text-text-secondary leading-normal">
-                {outputData && outputData.includes('Figma')
-                  ? 'Figma Error'
-                  : outputData && outputData.includes('Failed to fetch')
-                    ? 'Fetch Error'
-                    : 'Response Error'}
-              </p>
-              {outputData && <div className="text-xs text-text-tertiary bg-bg-tertiary p-2.5 rounded-lg max-w-full overflow-auto text-left whitespace-pre-wrap break-all">{outputData}</div>}
+              {outputData && (
+                <details className="mt-2 w-full max-w-xs">
+                  <summary className="cursor-pointer text-xs text-text-tertiary hover:text-text-primary">
+                    Show Technical Details
+                  </summary>
+                  <div className="mt-2 text-xs text-text-tertiary bg-bg-tertiary p-2.5 rounded-lg max-w-full overflow-auto text-left whitespace-pre-wrap break-all">
+                    {outputData}
+                  </div>
+                </details>
+              )}
             </div>
           )}
 

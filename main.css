@@ -209,8 +209,8 @@ button {
   display: flex;
   gap: 5px;
   font-family: inherit;
-  background: none;
-  color: var(--text-primary);
+  background-color: transparent;
+  color: inherit;
   border: none;
   font-size: 13px;
   cursor: pointer;

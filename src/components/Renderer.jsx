@@ -8,11 +8,22 @@ const Renderer = forwardRef(function Renderer({mode, code, onViewFullScreen}, re
   const [showError, setShowError] = useState(false)
 
   useEffect(() => {
+    setShowError(false); // Reset error state on code change
     if (ref && ref.current) {
       const iframe = ref.current;
       const handleLoad = () => {
         if (iframe.contentWindow) {
-          iframe.contentWindow.onerror = () => setShowError(true);
+          // A short delay to allow scripts to execute
+          const timer = setTimeout(() => {
+            // If the iframe is still blank, it might indicate a render-blocking error
+            if (iframe.contentDocument && iframe.contentDocument.body.innerHTML.trim() === '') {
+              setShowError(true);
+            }
+          }, 500);
+          iframe.contentWindow.onerror = () => {
+            clearTimeout(timer);
+            setShowError(true);
+          };
         }
       };
       iframe.addEventListener('load', handleLoad);
@@ -20,7 +31,7 @@ const Renderer = forwardRef(function Renderer({mode, code, onViewFullScreen}, re
         iframe.removeEventListener('load', handleLoad);
       };
     }
-  }, [ref]);
+  }, [code, ref]);
 
 
   const getSrcDoc = () => {
@@ -79,9 +90,15 @@ const Renderer = forwardRef(function Renderer({mode, code, onViewFullScreen}, re
 
       {showError && (
         <div className="error">
-          <p>
-            <span className="icon">error</span> This code produced an error.
-          </p>
+          <div className="p-5 bg-bg-primary/90 z-20 flex items-center justify-center flex-col gap-1.5 text-center text-text-secondary backdrop-blur-sm h-full w-full">
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-error/10 mb-2">
+              <span className="icon text-error text-3xl">code_off</span>
+            </div>
+            <h4 className="font-bold text-text-primary">Rendering Error</h4>
+            <p className="text-xs max-w-xs">
+              The generated code has a script error and could not be rendered correctly.
+            </p>
+          </div>
         </div>
       )}
     </div>
