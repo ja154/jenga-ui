@@ -6,3 +6,4 @@ export const outputWidth = 800
 export const outputHeight = 600
 export const isTouch = 'ontouchstart' in window
 export const isIframe = window.self !== window.top
+export const figmaUrlRegex = /figma\.com\/file\/([^/]+)\/.*?[?&]node-id=([^&]+)/;

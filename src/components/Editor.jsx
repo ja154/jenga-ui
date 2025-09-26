@@ -15,6 +15,7 @@ import {
 export default function Editor() {
   const editingOutput = useStore.use.editingOutput()
   const [chatPrompt, setChatPrompt] = useState('')
+  const [chatError, setChatError] = useState('');
   const [iframeKey, setIframeKey] = useState(0)
   const [isListening, setIsListening] = useState(false)
 
@@ -58,9 +59,16 @@ export default function Editor() {
 
   const handleTextSubmit = e => {
     e.preventDefault()
-    if (!chatPrompt.trim() || isBusy) return
-    applyAIChatEdit(chatPrompt)
-    setChatPrompt('')
+    if (isBusy) return;
+
+    const trimmedPrompt = chatPrompt.trim();
+    if (!trimmedPrompt) {
+      setChatError('Please enter an instruction to apply.');
+      return;
+    }
+    
+    applyAIChatEdit(trimmedPrompt);
+    setChatPrompt('');
   }
 
   const handleVoiceCommand = () => {
@@ -115,14 +123,22 @@ export default function Editor() {
           </div>
           <div className="flex-shrink-0 p-2.5 px-4 border-t border-border-primary bg-bg-tertiary">
             <form className="flex items-center gap-2.5" onSubmit={handleTextSubmit}>
-              <input
-                className="flex-grow bg-bg-secondary p-2.5 rounded-lg border border-border-secondary focus:border-primary"
-                type="text"
-                value={chatPrompt}
-                onChange={e => setChatPrompt(e.target.value)}
-                placeholder={isListening ? 'Listening...' : "e.g., make the button blue"}
-                disabled={isBusy || isListening}
-              />
+              <div className="flex-grow flex flex-col">
+                <input
+                  className={c('w-full bg-bg-secondary p-2.5 rounded-lg border focus:border-primary', chatError ? 'border-error' : 'border-border-secondary')}
+                  type="text"
+                  value={chatPrompt}
+                  onChange={e => {
+                    setChatPrompt(e.target.value);
+                    if (chatError) setChatError('');
+                  }}
+                  placeholder={isListening ? 'Listening...' : "e.g., make the button blue"}
+                  disabled={isBusy || isListening}
+                  aria-invalid={!!chatError}
+                  aria-describedby={chatError ? "chat-error" : undefined}
+                />
+                {chatError && <p id="chat-error" className="text-error text-xs mt-1" role="alert">{chatError}</p>}
+              </div>
                <button
                 type="button"
                 className={c('flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-9 h-9 text-xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary flex-shrink-0', {'bg-error text-white animate-pulse': isListening})}
@@ -135,7 +151,7 @@ export default function Editor() {
               <button
                 type="submit"
                 className={c('inline-flex py-2.5 px-2.5 rounded-lg gap-1 items-center justify-center bg-primary text-white relative transition-all filter hover:brightness-110 active:top-px active:brightness-90', {'loading': isEditingBusy})}
-                disabled={isBusy || isListening}
+                disabled={isBusy || isListening || !chatPrompt.trim()}
               >
                 <span className={c("icon", {"animate-spin": isEditingBusy})}>auto_fix_high</span> Apply
               </button>

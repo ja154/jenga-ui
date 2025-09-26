@@ -6,6 +6,7 @@ import useStore from './store'
 import modes from './modes'
 import llmGen from './llm'
 import models from './models'
+import {figmaUrlRegex} from './consts'
 
 const get = useStore.getState
 const set = useStore.setState
@@ -74,8 +75,6 @@ async function getFigmaFrameAsImage(fileKey, nodeId) {
   });
 }
 
-const figmaUrlRegex = /figma\.com\/file\/([^/]+)\/.*?[?&]node-id=([^&]+)/;
-
 export const init = () => {
   if (get().didInit) {
     return
@@ -118,11 +117,6 @@ export const addRound = async (prompt, options = {}) => {
   const isCloneMode = outputMode === 'clone'
   const figmaMatch =
     isCloneMode && cloneUrl ? cloneUrl.match(figmaUrlRegex) : null
-
-  if (isCloneMode && (!cloneUrl || !cloneUrl.trim())) {
-    alert('Please enter a URL to clone.')
-    return
-  }
 
   if (!batchMode && Object.values(versusModels).every(active => !active)) {
     return

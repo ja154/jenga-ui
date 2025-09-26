@@ -20,7 +20,7 @@ import {
   setOutputMode,
   setTemperature
 } from '../lib/actions'
-import {isTouch, isIframe} from '../lib/consts'
+import {isTouch, isIframe, figmaUrlRegex} from '../lib/consts'
 import FeedItem from './FeedItem'
 import Intro from './Intro'
 import FullScreenViewer from './FullScreenViewer'
@@ -61,6 +61,7 @@ export default function App() {
   });
   const [fullscreenOutput, setFullscreenOutput] = useState(null)
   const [cloneUrl, setCloneUrl] = useState('')
+  const [errors, setErrors] = useState({});
 
   const inputRef = useRef(null)
 
@@ -72,9 +73,42 @@ export default function App() {
   const onModifyPrompt = useCallback(prompt => {
     inputRef.current.value = prompt
     inputRef.current.focus()
+    setErrors({});
   }, [])
 
+  const validateInputs = useCallback(() => {
+    const newErrors = {};
+    const promptValue = inputRef.current.value.trim();
+
+    if (!promptValue) {
+      if (outputMode === 'clone') {
+        newErrors.prompt = 'Please describe your desired changes.';
+      } else if (outputMode === 'refactor') {
+        newErrors.prompt = 'Please paste your code to refactor.';
+      } else {
+        newErrors.prompt = 'Please enter a prompt.';
+      }
+    }
+
+    if (outputMode === 'clone') {
+      const url = cloneUrl.trim();
+      const urlRegex = /^(https?:\/\/)?([\w.-]+)\.([a-z]{2,6}\.?)(\/[\w.-]*)*\/?$/i;
+
+      if (!url) {
+        newErrors.cloneUrl = 'Please enter a URL to clone or a Figma link.';
+      } else if (!urlRegex.test(url) && !figmaUrlRegex.test(url)) {
+        newErrors.cloneUrl = 'Please enter a valid URL or Figma link.';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [outputMode, cloneUrl]);
+
   const handleGenerate = useCallback(() => {
+    if (!validateInputs()) {
+      return;
+    }
     const prompt = inputRef.current.value;
     if (outputMode === 'clone') {
       addRound(prompt, { cloneUrl });
@@ -82,7 +116,7 @@ export default function App() {
       addRound(prompt);
     }
     inputRef.current.blur();
-  }, [outputMode, cloneUrl]);
+  }, [outputMode, cloneUrl, validateInputs]);
 
   const toggleTheme = useCallback(() => {
     setIsDark(prevIsDark => {
@@ -118,6 +152,10 @@ export default function App() {
       document.documentElement.classList.toggle('light', !isDark);
     }
   }, [isDark])
+  
+  useEffect(() => {
+    setErrors({});
+  }, [outputMode]);
 
   const inputSection = (
     <div className="flex flex-col lg:flex-row gap-4 items-start w-full max-w-6xl">
@@ -272,50 +310,74 @@ export default function App() {
           >
             <div className="flex flex-col gap-1.5">
               {outputMode === 'clone' && (
-                <input
-                  className="border border-primary p-2.5 rounded-lg text-xs w-full h-10 overflow-hidden focus:bg-white/5 focus:ring-2 focus:ring-primary/50"
-                  placeholder="URL to clone or Figma frame link"
-                  value={cloneUrl}
-                  onChange={e => setCloneUrl(e.target.value)}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      inputRef.current.focus();
-                    }
-                  }}
-                />
+                <div className="flex flex-col">
+                  <input
+                    className={c("border p-2.5 rounded-lg text-xs w-full h-10 overflow-hidden focus:bg-white/5 focus:ring-2 focus:ring-primary/50", errors.cloneUrl ? 'border-error' : 'border-primary')}
+                    placeholder="URL to clone or Figma frame link"
+                    value={cloneUrl}
+                    onChange={e => {
+                      setCloneUrl(e.target.value);
+                      if (errors.cloneUrl) setErrors(prev => ({...prev, cloneUrl: null}));
+                    }}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        inputRef.current.focus();
+                      }
+                    }}
+                    aria-invalid={!!errors.cloneUrl}
+                    aria-describedby={errors.cloneUrl ? "clone-url-error" : undefined}
+                  />
+                  {errors.cloneUrl && <p id="clone-url-error" className="text-error text-xs mt-1.5" role="alert">{errors.cloneUrl}</p>}
+                </div>
               )}
   
               {['refactor', 'clone'].includes(outputMode) ? (
-                <textarea
-                  className="border border-primary p-2.5 rounded-lg text-xs w-full h-20 min-h-10 resize-y focus:bg-white/5 font-mono focus:ring-2 focus:ring-primary/50"
-                  placeholder={
-                    outputMode === 'clone'
-                      ? 'Describe your desired changes... (Cmd/Ctrl+Enter)'
-                      : 'Paste your code here to refactor it... (Cmd/Ctrl+Enter)'
-                  }
-                  onFocus={!isTouch && (() => setShowPresets(false))}
-                  ref={inputRef}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                      e.preventDefault();
-                      handleGenerate();
+                <div className="flex flex-col">
+                  <textarea
+                    className={c("border p-2.5 rounded-lg text-xs w-full h-20 min-h-10 resize-y focus:bg-white/5 font-mono focus:ring-2 focus:ring-primary/50", errors.prompt ? 'border-error' : 'border-primary')}
+                    placeholder={
+                      outputMode === 'clone'
+                        ? 'Describe your desired changes... (Cmd/Ctrl+Enter)'
+                        : 'Paste your code here to refactor it... (Cmd/Ctrl+Enter)'
                     }
-                  }}
-                />
+                    onFocus={!isTouch && (() => setShowPresets(false))}
+                    ref={inputRef}
+                    onChange={() => {
+                      if (errors.prompt) setErrors(prev => ({ ...prev, prompt: null }));
+                    }}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                        e.preventDefault();
+                        handleGenerate();
+                      }
+                    }}
+                    aria-invalid={!!errors.prompt}
+                    aria-describedby={errors.prompt ? "prompt-error" : undefined}
+                  />
+                  {errors.prompt && <p id="prompt-error" className="text-error text-xs mt-1.5" role="alert">{errors.prompt}</p>}
+                </div>
               ) : (
-                <input
-                  className="border border-primary p-2.5 rounded-lg text-xs w-full h-10 overflow-hidden focus:bg-white/5 focus:ring-2 focus:ring-primary/50"
-                  placeholder="e.g., a futuristic dashboard UI"
-                  onFocus={!isTouch && (() => setShowPresets(false))}
-                  ref={inputRef}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleGenerate();
-                    }
-                  }}
-                />
+                <div className="flex flex-col">
+                  <input
+                    className={c("border p-2.5 rounded-lg text-xs w-full h-10 overflow-hidden focus:bg-white/5 focus:ring-2 focus:ring-primary/50", errors.prompt ? 'border-error' : 'border-primary')}
+                    placeholder="e.g., a futuristic dashboard UI"
+                    onFocus={!isTouch && (() => setShowPresets(false))}
+                    ref={inputRef}
+                    onChange={() => {
+                      if (errors.prompt) setErrors(prev => ({ ...prev, prompt: null }));
+                    }}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleGenerate();
+                      }
+                    }}
+                    aria-invalid={!!errors.prompt}
+                    aria-describedby={errors.prompt ? "prompt-error" : undefined}
+                  />
+                  {errors.prompt && <p id="prompt-error" className="text-error text-xs mt-1.5" role="alert">{errors.prompt}</p>}
+                </div>
               )}
             </div>
             <div className={c('absolute bottom-full mb-2 w-fit bg-bg-primary border border-border-primary rounded-lg p-2.5 max-h-[370px] overflow-auto opacity-0 transition-all duration-200 ease-out pointer-events-none z-10 -translate-y-1.5 origin-bottom max-w-[70vw] shadow-lg', {'opacity-100 pointer-events-auto translate-y-0': showPresets})}>
