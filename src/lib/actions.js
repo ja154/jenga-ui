@@ -80,6 +80,15 @@ export const init = () => {
     return
   }
 
+  // Listen for system theme changes and update if no user preference is set
+  window
+    .matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', e => {
+      if (localStorage.getItem('isDark') === null) {
+        set({isDark: e.matches})
+      }
+    })
+
   set(state => {
     state.didInit = true
   })
@@ -297,6 +306,14 @@ export const addRound = async (prompt, options = {}) => {
       targetOutput.isBusy = false
       targetOutput.totalTime = Date.now() - targetOutput.startTime
     })
+  })
+}
+
+export const toggleTheme = () => {
+  set(state => {
+    const newIsDark = !state.isDark
+    state.isDark = newIsDark
+    localStorage.setItem('isDark', JSON.stringify(newIsDark))
   })
 }
 

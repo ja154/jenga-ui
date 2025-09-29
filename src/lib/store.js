@@ -9,6 +9,17 @@ import {createSelectorFunctions} from 'auto-zustand-selectors-hook'
 import modes from './modes'
 import models from './models'
 
+const getInitialTheme = () => {
+  if (typeof window === 'undefined') {
+    return false
+  }
+  const storedTheme = window.localStorage.getItem('isDark')
+  if (storedTheme !== null) {
+    return JSON.parse(storedTheme)
+  }
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false
+}
+
 export default createSelectorFunctions(
   create(
     immer(() => ({
@@ -24,7 +35,8 @@ export default createSelectorFunctions(
           .map(model => [model, true])
       ),
       temperature: 0.9,
-      editingOutput: null
+      editingOutput: null,
+      isDark: getInitialTheme(),
     }))
   )
 )

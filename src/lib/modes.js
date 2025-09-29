@@ -33,6 +33,7 @@ You are an elite frontend developer and UI/UX designer, renowned for crafting in
 - **Single Self-Contained File:** ALL CSS and JavaScript must be inlined within the single HTML file.
 - **No External Dependencies:** Do not use external libraries, frameworks, or assets (no images, fonts from URLs, etc.). Use placeholder content where necessary.
 - **Accessibility:** Write clean, semantic, and accessible HTML (e.g., use proper tags, ARIA attributes).
+- **Theme-Awareness:** The design **must** be theme-aware, supporting both light and dark modes. Define CSS custom properties (variables) for colors in a \`:root\` selector for the light theme. Use a \`@media (prefers-color-scheme: dark) { :root { ... } }\` block to provide dark theme colors. The component must look good in both modes.
 
 Your final output must be ONLY the raw HTML code. Do not include any surrounding text, explanations, or markdown code fences like \`\`\`html.\``),
 
@@ -285,6 +286,7 @@ You are a world-class senior frontend engineer and UI/UX designer with a keen ey
 **Technical Constraints:**
 - **Single Self-Contained File:** The final output must be a single, self-contained HTML file. All CSS and JavaScript must be inlined.
 - **No External Dependencies:** Do not use external libraries, frameworks, or assets. If icons are needed, they must be embedded as inline SVGs.
+- **Theme-Awareness:** The design **must** be theme-aware, supporting both light and dark modes. Define CSS custom properties (variables) for colors in a \`:root\` selector for the light theme. Use a \`@media (prefers-color-scheme: dark) { :root { ... } }\` block to provide dark theme colors. The component must look good in both modes.
 
 Your final output should be ONLY the raw HTML code. Do not include any surrounding text, explanations, or markdown code fences like \`\`\`html.\``),
     getTitle: s => `Refactored Code ${s}`,
@@ -358,6 +360,7 @@ The input will be either:
 **Technical Constraints:**
 - **Single Self-Contained File:** The final output must be a single HTML file. All CSS and JavaScript must be inlined.
 - **No External Dependencies:** Do not link to external assets. If you need placeholder images or icons, generate them using inline SVG.
+- **Theme-Awareness:** The design **must** be theme-aware, supporting both light and dark modes. Define CSS custom properties (variables) for colors in a \`:root\` selector for the light theme. Use a \`@media (prefers-color-scheme: dark) { :root { ... } }\` block to provide dark theme colors. The component must look good in both modes.
 
 Your final output must be ONLY the raw HTML code. Do not include any surrounding text, explanations, or markdown code fences like \`\`\`html.\``),
     getTitle: s => `Cloned ${s}`,

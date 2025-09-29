@@ -1,5 +1,3 @@
-
-
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -295,4 +293,147 @@ export default function App() {
                       }
                     }}
                     aria-invalid={!!errors.cloneUrl}
-                    aria-describedby
+                    aria-describedby={errors.cloneUrl ? 'clone-url-error' : undefined}
+                  />
+                  {errors.cloneUrl && <p id="clone-url-error" className="text-error text-xs mt-1" role="alert">{errors.cloneUrl}</p>}
+                </div>
+              )}
+              <div className="flex flex-col">
+                <textarea
+                  ref={inputRef}
+                  className={c("border p-2.5 rounded-lg text-xs w-full overflow-hidden focus:bg-white/5 focus:ring-2 focus:ring-primary/50", errors.prompt ? 'border-error' : 'border-primary', outputMode === 'refactor' ? 'min-h-[120px] font-mono' : 'min-h-[60px]')}
+                  placeholder={
+                    modes[outputMode].presets[
+                      Math.floor(Math.random() * modes[outputMode].presets.length)
+                    ].prompt
+                  }
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                      handleGenerate();
+                    }
+                  }}
+                  aria-invalid={!!errors.prompt}
+                  aria-describedby={errors.prompt ? 'prompt-error' : undefined}
+                />
+                {errors.prompt && <p id="prompt-error" className="text-error text-xs mt-1" role="alert">{errors.prompt}</p>}
+              </div>
+            </div>
+            <div className={c('absolute bottom-full mb-2 w-full max-w-full bg-bg-primary border border-border-primary rounded-lg p-2.5 h-auto max-h-[30vh] overflow-auto opacity-0 transition-all duration-200 ease-out pointer-events-none z-10 translate-y-1.5 origin-bottom', {'opacity-100 pointer-events-auto translate-y-0': showPresets})}>
+              <ul className="flex flex-wrap flex-row gap-2">
+                {presets.map(({label, prompt}) => (
+                  <li key={label}>
+                    <button
+                      onClick={() => onModifyPrompt(prompt)}
+                      className="whitespace-normal py-2 px-2.5 rounded-lg bg-bg-quaternary text-text-primary text-left leading-normal hover:brightness-[var(--hover-brightness)]"
+                    >
+                      {label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <button
+            className="inline-flex py-2.5 px-4 rounded-lg gap-1 items-center justify-center bg-primary text-white relative transition-all filter hover:brightness-110 active:top-px active:brightness-90 h-10"
+            onClick={handleGenerate}
+          >
+            <span className="icon">auto_awesome</span> Generate
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="relative w-full min-h-screen bg-bg-primary text-text-primary flex flex-col items-center">
+      <header className="sticky top-0 z-20 w-full flex items-center justify-between p-4 px-5 bg-glass-bg-primary border-b border-glass-border-primary backdrop-blur-xl">
+        <div className="flex items-center gap-4">
+          <h1>
+            JengaUi<span>/Gemini</span>
+          </h1>
+          <div className="w-px h-6 bg-border-primary" />
+          <div className="flex items-center gap-2">
+            <button
+              className={c(
+                'py-2 px-3 rounded-lg gap-1 flex items-center justify-center relative transition-all text-xs',
+                {
+                  'bg-bg-quaternary text-text-primary': batchMode,
+                  'text-text-tertiary': !batchMode
+                }
+              )}
+              onClick={() => setBatchMode(true)}
+            >
+              <span className="icon">dashboard</span> Batch
+            </button>
+            <button
+              className={c(
+                'py-2 px-3 rounded-lg gap-1 flex items-center justify-center relative transition-all text-xs',
+                {
+                  'bg-bg-quaternary text-text-primary': !batchMode,
+                  'text-text-tertiary': !batchMode
+                }
+              )}
+              onClick={() => setBatchMode(false)}
+            >
+              <span className="icon">compare_arrows</span> Versus
+            </button>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-10 h-10 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+          >
+            <span className="icon">{isDark ? 'light_mode' : 'dark_mode'}</span>
+            <span className="tooltip">{isDark ? 'Light' : 'Dark'} mode</span>
+          </button>
+          {feed.length > 0 && (
+            <button
+              className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-10 h-10 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
+              aria-label="Clear all"
+              onClick={() => {
+                if (window.confirm('Are you sure you want to clear all rounds?')) {
+                  reset();
+                }
+              }}
+            >
+              <span className="icon">clear_all</span>
+              <span className="tooltip">Clear all</span>
+            </button>
+          )}
+        </div>
+      </header>
+
+      <main className="w-full max-w-6xl p-5">
+        {feed.length === 0 ? (
+          <Intro inputSection={inputSection} />
+        ) : (
+          <div className="w-full flex flex-col gap-10">
+            {inputSection}
+            <ul className="w-full flex flex-col gap-10">
+              {feed.map(round => (
+                <FeedItem
+                  key={round.id}
+                  round={round}
+                  onModifyPrompt={onModifyPrompt}
+                  onViewFullScreen={setFullscreenOutput}
+                />
+              ))}
+            </ul>
+          </div>
+        )}
+      </main>
+
+      {fullscreenOutput && (
+        <FullScreenViewer
+          htmlContent={fullscreenOutput}
+          isDark={isDark}
+          onClose={() => setFullscreenOutput(null)}
+        />
+      )}
+
+      {editingOutput && <Editor />}
+    </div>
+  )
+}

@@ -10,6 +10,7 @@ import html2canvas from 'html2canvas'
 import modes from '../lib/modes'
 import models from '../lib/models'
 import {startEditing} from '../lib/actions'
+import useStore from '../lib/store'
 import Renderer from './Renderer'
 
 function ModelOutput({
@@ -29,6 +30,7 @@ function ModelOutput({
   const [time, setTime] = useState(0)
   const [showSource, setShowSource] = useState(false)
   const [copied, setCopied] = useState(false)
+  const isDark = useStore.use.isDark()
   const rendererRef = useRef(null)
 
   const getFullScreenContent = () => {
@@ -51,7 +53,7 @@ function ModelOutput({
                 width: 100%; 
                 height: 100%;
                 max-width: 1400px;
-                background-color: white;
+                background-color: ${isDark ? '#27272a' : 'white'};
                 border-radius: 8px;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.1);
               }

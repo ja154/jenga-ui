@@ -3,9 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 import React, {memo, useEffect, useState, forwardRef} from 'react'
+import useStore from '../lib/store'
 
 const Renderer = forwardRef(function Renderer({mode, code, onViewFullScreen}, ref) {
   const [showError, setShowError] = useState(false)
+  const isDark = useStore.use.isDark()
 
   useEffect(() => {
     setShowError(false); // Reset error state on code change
@@ -44,16 +46,18 @@ const Renderer = forwardRef(function Renderer({mode, code, onViewFullScreen}, re
                 display: flex; 
                 align-items: center; 
                 justify-content: center; 
-                background-color: #f0f0f0; 
+                background-color: ${isDark ? '#27272a' : '#f0f0f0'}; 
                 margin: 0;
                 height: 100vh;
                 font-family: sans-serif;
+                transition: background-color 0.2s;
               }
               svg { 
                 max-width: 95%; 
                 max-height: 95%;
-                background-color: white;
-                border: 1px solid #ccc;
+                background-color: ${isDark ? '#3f3f46' : 'white'};
+                border: 1px solid ${isDark ? '#52525b' : '#ccc'};
+                transition: background-color 0.2s, border-color 0.2s;
               }
             </style>
           </head>
@@ -63,7 +67,23 @@ const Renderer = forwardRef(function Renderer({mode, code, onViewFullScreen}, re
         </html>
       `
     }
-    return code
+    
+    if (!code) return ''
+    const themeScript = `
+      <script>
+        document.documentElement.classList.toggle('dark', ${isDark});
+        document.documentElement.classList.toggle('light', ${!isDark});
+      </script>
+    `
+    if (code.includes('</head>')) {
+      return code.replace('</head>', `${themeScript}</head>`)
+    }
+    // Fallback for body injection
+    if (code.includes('<body>')) {
+      return code.replace('<body>', `<body>${themeScript}`)
+    }
+    // If no head or body, just prepend
+    return themeScript + code
   }
 
   return (
