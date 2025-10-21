@@ -25,20 +25,20 @@ export default function Intro({inputSection}) {
   )
 
   return (
-    <section className="flex flex-col gap-10 items-center justify-center text-center max-w-6xl w-full mx-auto bg-glass-bg-secondary border border-glass-border-primary rounded-2xl p-10 backdrop-blur-xl glow-card">
-      <h2 className="text-2xl">👋 Welcome to JengaUi 🧱</h2>
-      <p className="text-sm leading-loose max-w-2xl">
-        This is a playground where you can generate anything from simple UI
-        components to complex, full-page layouts for applications and websites,
-        all from a simple text prompt. ✅ 👀 Try one of the examples below to get
-        started:
-      </p>
+    <section className="flex flex-col gap-10 items-center justify-center text-center max-w-7xl w-full mx-auto bg-glass-bg-secondary border border-glass-border-primary rounded-2xl p-6 sm:p-10 backdrop-blur-xl glow-card">
+      <div className="flex flex-col items-center gap-4">
+        <h2 className="text-3xl font-bold">Welcome to JengaUI 🧱</h2>
+        <p className="text-base leading-relaxed max-w-2xl text-text-secondary">
+          A playground to generate UI components, wireframes, and more from a simple text prompt.
+          Select a category and try an example below to get started.
+        </p>
+      </div>
 
       {inputSection}
 
       {Object.entries(modes).map(([key, mode]) => (
           <div key={key}>
-            <h3 className="mb-5">
+            <h3 className="mb-5 font-bold text-lg">
               {mode.emoji} {mode.name}
             </h3>
 

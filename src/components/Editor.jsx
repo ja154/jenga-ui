@@ -98,11 +98,11 @@ export default function Editor() {
           Live Editor
         </h2>
         <div className="flex gap-2.5">
-          <button className="inline-flex py-2.5 px-3 rounded-lg gap-1 items-center justify-center bg-bg-senary text-text-quinary relative transition-all filter hover:brightness-110 active:top-px active:brightness-90" onClick={stopEditing}>
+          <button className="inline-flex py-2 px-4 rounded-lg gap-1.5 items-center justify-center bg-bg-tertiary text-text-secondary hover:bg-bg-quaternary hover:text-text-primary font-semibold relative transition-all" onClick={stopEditing}>
             <span className="icon">close</span> Close
           </button>
           <button
-            className="inline-flex py-2.5 px-4 rounded-lg gap-1 items-center justify-center bg-primary text-white relative transition-all filter hover:brightness-110 active:top-px active:brightness-90"
+            className="inline-flex py-2 px-4 rounded-lg gap-1.5 items-center justify-center bg-primary text-white font-semibold relative transition-all filter hover:brightness-110 active:scale-[0.98]"
             onClick={saveAndStopEditing}
             disabled={isBusy}
           >
@@ -150,10 +150,16 @@ export default function Editor() {
               </button>
               <button
                 type="submit"
-                className={c('inline-flex py-2.5 px-2.5 rounded-lg gap-1 items-center justify-center bg-primary text-white relative transition-all filter hover:brightness-110 active:top-px active:brightness-90', {'loading': isEditingBusy})}
+                className="inline-flex h-10 w-24 justify-center items-center py-2.5 px-2.5 rounded-lg gap-1.5 bg-primary text-white font-semibold relative transition-all filter hover:brightness-110 active:scale-[0.98]"
                 disabled={isBusy || isListening || !chatPrompt.trim()}
               >
-                <span className={c("icon", {"animate-spin": isEditingBusy})}>auto_fix_high</span> Apply
+                {isEditingBusy ? (
+                  <span className="icon animate-spin">progress_activity</span>
+                ) : (
+                  <>
+                    <span className="icon">auto_fix_high</span> Apply
+                  </>
+                )}
               </button>
             </form>
           </div>

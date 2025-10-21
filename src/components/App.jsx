@@ -125,11 +125,11 @@ export default function App() {
   }, [outputMode]);
 
   const inputSection = (
-    <div className="flex flex-col lg:flex-row gap-4 items-start w-full max-w-6xl">
+    <div className="flex flex-col xl:flex-row gap-6 items-start w-full max-w-7xl">
       {/* Settings Card */}
-      <div className="w-full lg:w-auto bg-glass-bg-secondary border border-glass-border-primary rounded-2xl p-4 backdrop-blur-xl glow-card">
+      <div className="w-full xl:w-auto bg-glass-bg-secondary border border-glass-border-primary rounded-2xl p-5 backdrop-blur-xl glow-card">
         <h3 className="font-bold text-text-secondary mb-4 text-sm">Configuration</h3>
-        <div className="flex flex-wrap gap-4 items-end">
+        <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-2 gap-4 items-end">
           {/* Output Mode */}
           <div
             className="flex flex-col gap-1.5 relative"
@@ -253,7 +253,7 @@ export default function App() {
       </div>
   
       {/* Prompt Card */}
-      <div className="w-full flex-grow bg-glass-bg-secondary border border-glass-border-primary rounded-2xl p-4 backdrop-blur-xl glow-card">
+      <div className="w-full flex-grow bg-glass-bg-secondary border border-glass-border-primary rounded-2xl p-5 backdrop-blur-xl glow-card">
         <h3 className="font-bold text-text-secondary mb-4 text-sm">
           {outputMode === 'clone' ? 'URL & Prompt' :
           outputMode === 'refactor' ? 'Code' :
@@ -334,7 +334,7 @@ export default function App() {
             </div>
           </div>
           <button
-            className="inline-flex py-2.5 px-4 rounded-lg gap-1 items-center justify-center bg-primary text-white relative transition-all filter hover:brightness-110 active:top-px active:brightness-90 h-10"
+            className="inline-flex py-2.5 px-4 rounded-lg gap-1.5 items-center justify-center bg-primary text-white font-semibold relative transition-all filter hover:brightness-110 active:scale-[0.98] h-10"
             onClick={handleGenerate}
           >
             <span className="icon">auto_awesome</span> Generate
@@ -349,33 +349,34 @@ export default function App() {
       <header className="sticky top-0 z-20 w-full flex items-center justify-between p-4 px-5 bg-glass-bg-primary border-b border-glass-border-primary backdrop-blur-xl">
         <div className="flex items-center gap-4">
           <h1>
-            JengaUi<span>/Gemini</span>
+            <span role="img" aria-label="Jenga blocks">🧱</span>
+            <span>JengaUI</span>
           </h1>
-          <div className="w-px h-6 bg-border-primary" />
-          <div className="flex items-center gap-2">
+          <div className="w-px h-6 bg-border-primary hidden sm:block" />
+          <div className="hidden sm:flex items-center gap-1 p-1 rounded-lg bg-bg-tertiary">
             <button
               className={c(
-                'py-2 px-3 rounded-lg gap-1 flex items-center justify-center relative transition-all text-xs',
+                'py-1.5 px-3 rounded-md gap-1 flex items-center justify-center relative transition-all text-xs font-semibold',
                 {
-                  'bg-bg-quaternary text-text-primary': batchMode,
-                  'text-text-tertiary': !batchMode
+                  'bg-bg-secondary shadow-sm text-text-primary': batchMode,
+                  'text-text-tertiary hover:text-text-primary': !batchMode
                 }
               )}
               onClick={() => setBatchMode(true)}
             >
-              <span className="icon">dashboard</span> Batch
+              <span className="icon text-base">dashboard</span> Batch
             </button>
             <button
               className={c(
-                'py-2 px-3 rounded-lg gap-1 flex items-center justify-center relative transition-all text-xs',
+                'py-1.5 px-3 rounded-md gap-1 flex items-center justify-center relative transition-all text-xs font-semibold',
                 {
-                  'bg-bg-quaternary text-text-primary': !batchMode,
-                  'text-text-tertiary': !batchMode
+                  'bg-bg-secondary shadow-sm text-text-primary': !batchMode,
+                  'text-text-tertiary hover:text-text-primary': !batchMode
                 }
               )}
               onClick={() => setBatchMode(false)}
             >
-              <span className="icon">compare_arrows</span> Versus
+              <span className="icon text-base">compare_arrows</span> Versus
             </button>
           </div>
         </div>
@@ -405,7 +406,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className="w-full max-w-6xl p-5">
+      <main className="w-full max-w-7xl p-4 sm:p-6 lg:p-8">
         {feed.length === 0 ? (
           <Intro inputSection={inputSection} />
         ) : (

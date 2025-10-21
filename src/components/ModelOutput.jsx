@@ -180,9 +180,9 @@ function ModelOutput({
         </div>
       </div>
 
-      <div className="flex justify-between items-start text-xs text-text-primary gap-4">
-        <div className="flex flex-col gap-1.5">
-          <div>
+      <div className="flex justify-between items-center text-xs text-text-primary gap-4">
+        <div className="flex flex-col gap-1">
+          <div className="font-semibold">
             {models[model].version} {models[model].name}
           </div>
           {(time || totalTime) && (
@@ -192,7 +192,7 @@ function ModelOutput({
           )}
         </div>
 
-        <div className={c('flex items-center gap-2 opacity-0 transition-opacity duration-200 ease-out pointer-events-none', {'opacity-100 pointer-events-auto': outputData && !gotError})}>
+        <div className={c('flex items-center gap-1.5 transition-opacity duration-200 ease-out', {'opacity-0 pointer-events-none': !outputData || gotError})}>
           {['wireframe', 'favicon'].includes(outputMode) && (
             <button
               className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-10 h-10 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"

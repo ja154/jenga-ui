@@ -12,20 +12,21 @@ export default function FeedItem({round, onModifyPrompt, onViewFullScreen}) {
   const [showSystemInstruction, setShowSystemInstruction] = useState(false)
 
   return (
-    <li className="w-full flex flex-col gap-2.5 bg-glass-bg-secondary border border-glass-border-primary p-5 rounded-lg animate-fadeInUp glow-card">
-      <div className={c('flex items-center justify-between gap-4', {'items-start': showSystemInstruction})}>
-        <h3 className={c('text-sm leading-normal flex items-center gap-2.5', {'items-start': showSystemInstruction})}>
-          <div className="bg-bg-septenary text-text-secondary py-1 px-2.5 text-xs rounded-full inline-flex items-center gap-1 whitespace-nowrap">
+    <li className="w-full flex flex-col gap-4 bg-glass-bg-secondary border border-glass-border-primary p-5 rounded-2xl animate-fadeInUp glow-card">
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+        <div className={c('flex-grow flex items-start gap-3', {'items-start': showSystemInstruction})}>
+          <div className="bg-bg-septenary text-text-secondary py-1 px-2.5 text-xs rounded-full inline-flex items-center gap-1.5 whitespace-nowrap mt-1">
             {modes[round.outputMode].emoji} {modes[round.outputMode].name}
           </div>
-          <div className="flex flex-col gap-1.5 items-start">
+          <div className="flex flex-col gap-1.5 items-start flex-grow">
+            <p className="whitespace-pre-wrap text-text-primary text-[14px]">{round.prompt}</p>
             {showSystemInstruction && (
-              <p className="text-text-secondary whitespace-pre-wrap">{round.systemInstruction}</p>
+              <p className="text-text-secondary text-xs whitespace-pre-wrap p-3 bg-bg-tertiary rounded-md mt-2 w-full">{round.systemInstruction}</p>
             )}
-            <p className="whitespace-pre-wrap">{round.prompt}</p>
           </div>
-        </h3>
-        <div className="flex items-center gap-2.5">
+        </div>
+
+        <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
           <button
             className="flex items-center justify-center bg-bg-quaternary text-text-senary rounded-full w-10 h-10 text-2xl transition-all duration-200 ease-out hover:bg-bg-quinary hover:text-text-primary"
             onClick={() => setShowSystemInstruction(!showSystemInstruction)}
