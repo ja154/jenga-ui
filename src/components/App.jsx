@@ -43,6 +43,7 @@ export default function App() {
   const [fullscreenOutput, setFullscreenOutput] = useState(null)
   const [cloneUrl, setCloneUrl] = useState('')
   const [errors, setErrors] = useState({});
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const inputRef = useRef(null)
 
@@ -86,18 +87,23 @@ export default function App() {
     return Object.keys(newErrors).length === 0;
   }, [outputMode, cloneUrl]);
 
-  const handleGenerate = useCallback(() => {
-    if (!validateInputs()) {
+  const handleGenerate = useCallback(async () => {
+    if (isGenerating || !validateInputs()) {
       return;
     }
+    setIsGenerating(true);
     const prompt = inputRef.current.value;
-    if (outputMode === 'clone') {
-      addRound(prompt, { cloneUrl });
-    } else {
-      addRound(prompt);
+    try {
+      if (outputMode === 'clone') {
+        await addRound(prompt, { cloneUrl });
+      } else {
+        await addRound(prompt);
+      }
+    } finally {
+      setIsGenerating(false);
     }
     inputRef.current.blur();
-  }, [outputMode, cloneUrl, validateInputs]);
+  }, [outputMode, cloneUrl, validateInputs, isGenerating]);
 
   useEffect(() => {
     shufflePresets()
@@ -336,8 +342,16 @@ export default function App() {
           <button
             className="inline-flex py-2.5 px-4 rounded-lg gap-1.5 items-center justify-center bg-primary text-white font-semibold relative transition-all filter hover:brightness-110 active:scale-[0.98] h-10"
             onClick={handleGenerate}
+            disabled={isGenerating}
           >
-            <span className="icon">auto_awesome</span> Generate
+            {isGenerating ? (
+              <span className="icon animate-spin">progress_activity</span>
+            ) : (
+              <>
+                <span className="icon">auto_awesome</span>
+                <span>Generate</span>
+              </>
+            )}
           </button>
         </div>
       </div>

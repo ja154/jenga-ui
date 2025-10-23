@@ -234,7 +234,7 @@ export const addRound = async (prompt, options = {}) => {
         : prompt
   }
 
-  newRound.outputs.forEach(async (output, i) => {
+  const generationPromises = newRound.outputs.map(async (output, i) => {
     let res
 
     try {
@@ -307,6 +307,8 @@ export const addRound = async (prompt, options = {}) => {
       targetOutput.totalTime = Date.now() - targetOutput.startTime
     })
   })
+
+  await Promise.all(generationPromises);
 }
 
 export const toggleTheme = () => {
